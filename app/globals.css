@@ -1,26 +1,243 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* --- ESTILOS ESPECÍFICOS PARA IMPRESIÓN --- */
+@media print {
+  /* --- Reseteos Generales para Impresión --- */
+  body {
+    font-family: "Courier New", Courier, monospace; /* Fuente monoespaciada para recibos */
+    font-size: 9pt; /* Tamaño de fuente común para recibos térmicos */
+    line-height: 1.2; /* Ajustar interlineado */
+    background-color: white !important; /* Forzar fondo blanco */
+    color: black !important; /* Forzar texto negro */
+    margin: 0 !important; /* Quitar márgenes del body */
+    padding: 0 !important; /* Quitar padding del body */
+    -webkit-print-color-adjust: exact !important; /* Para Chrome/Safari: asegurar que los colores se impriman */
+    color-adjust: exact !important; /* Estándar: asegurar que los colores se impriman */
+  }
+
+  /* --- Ocultar Elementos No Deseados en la Impresión --- */
+  header, /* Si tu header principal tiene la etiqueta <header> */
+  aside,  /* Si tu sidebar tiene la etiqueta <aside> */
+  nav,    /* Cualquier elemento de navegación principal */
+  footer, /* Si tienes un footer global */
+  .no-print /* Una clase genérica que puedes añadir a elementos para ocultarlos */ {
+    display: none !important;
+  }
+
+  /* Ajustar el layout principal para que solo el contenido imprimible ocupe espacio */
+  main.print-main-content, /* Si envuelves tu contenido principal con esto */
+  div[data-radix-portal] > div[role="dialog"], /* Intentar apuntar al contenido del diálogo */
+  div[data-dialog-content-for-print] /* Una clase que podrías añadir al DialogContent del recibo */ {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    position: static !important; /* Resetear posicionamiento si es fixed/absolute */
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    overflow: visible !important; /* Mostrar todo el contenido, no scroll */
+  }
+
+  /* --- Estilos Específicos para el Componente del Recibo --- */
+  /* Asumimos que PrintableSaleReceipt tiene un div exterior al que podemos apuntar,
+     o le añades una clase específica como 'printable-receipt-area' */
+  .printable-receipt-area {
+    /* Añade esta clase al div raíz de PrintableSaleReceipt */
+    width: 58mm; /* Ancho para papel térmico de 58mm */
+    /* width: 80mm; */ /* Alternativa para papel de 80mm */
+    margin: 0 auto; /* Centrar en la previsualización si es más ancha */
+    padding: 2mm 3mm; /* Pequeños márgenes internos */
+    box-shadow: none !important;
+    border: none !important;
+    font-size: 9pt !important; /* Asegurar tamaño de fuente */
+    line-height: 1.2 !important;
+    color: black !important;
+  }
+
+  .printable-receipt-area h1,
+  .printable-receipt-area h2,
+  .printable-receipt-area h3,
+  .printable-receipt-area p,
+  .printable-receipt-area span,
+  .printable-receipt-area th,
+  .printable-receipt-area td {
+    color: black !important;
+    background-color: transparent !important;
+    font-size: inherit !important; /* Heredar del padre .printable-receipt-area */
+  }
+
+  .printable-receipt-area img {
+    max-width: 60%; /* Ajustar el tamaño del logo */
+    height: auto;
+    margin-bottom: 3mm;
+    /* Considerar convertir a blanco y negro con filter si es necesario */
+    /* filter: grayscale(100%); */
+  }
+
+  .printable-receipt-area .separator-print {
+    /* Clase para los Separator en modo print */
+    border-style: dashed !important;
+    border-color: #666 !important; /* Un gris oscuro */
+    margin-top: 1mm !important;
+    margin-bottom: 1mm !important;
+  }
+
+  .printable-receipt-area table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+  .printable-receipt-area th,
+  .printable-receipt-area td {
+    padding: 0.5mm 0 !important; /* Padding mínimo para celdas */
+    text-align: left;
+    vertical-align: top; /* Alineación vertical para items largos */
+  }
+  .printable-receipt-area th.text-center,
+  .printable-receipt-area td.text-center {
+    text-align: center !important;
+  }
+  .printable-receipt-area th.text-right,
+  .printable-receipt-area td.text-right {
+    text-align: right !important;
+  }
+
+  /* Ocultar el DialogFooter que contiene los botones "Cerrar" e "Imprimir" */
+  div[data-dialog-content-for-print] > div[role="document"] ~ div {
+    /* Apunta al footer si sigue esa estructura Radix */
+    display: none !important;
+  }
+  /* O una forma más simple si puedes añadir una clase al footer del diálogo */
+  .print-dialog-footer-hide {
+    display: none !important;
+  }
+
+  /* Forzar que no haya saltos de página dentro de elementos clave si es posible */
+  .printable-receipt-area table,
+  .printable-receipt-area tr,
+  .printable-receipt-area td,
+  .printable-receipt-area div {
+    page-break-inside: avoid !important;
+  }
 }
