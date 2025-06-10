@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { EnrichedSaleDetailed, SaleFromAPI } from "@/types/sales.types";
+import { EnrichedSaleDetailed } from "@/types/sales.types";
 import { StoreSettings } from "@/types/settings.types";
 import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 import { Separator } from "@/components/ui/separator";

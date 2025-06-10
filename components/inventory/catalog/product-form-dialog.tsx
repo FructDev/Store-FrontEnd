@@ -17,7 +17,7 @@ import {
   ProductType as PrismaProductType,
   ProductType,
 } from "@/types/prisma-enums"; // Usa tu enum local
-import { Prisma } from "@prisma/client"; // Para Prisma.JsonNull
+// import { Prisma } from "@prisma/client"; // Para Prisma.JsonNull
 
 import { Button } from "@/components/ui/button";
 import {
@@ -48,7 +48,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, PlusCircle, Trash2 } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getErrorMessage } from "@/lib/utils/get-error-message";
 

@@ -98,6 +98,7 @@ export default function RegisterPage() {
     mutationFn: async (data: RegisterFormValues) => {
       // No necesitamos enviar confirmPassword al backend
       const { confirmPassword, ...submissionData } = data;
+      console.log(typeof confirmPassword);
       const response = await apiClient.post<RegisterResponse>(
         "/auth/register",
         submissionData
