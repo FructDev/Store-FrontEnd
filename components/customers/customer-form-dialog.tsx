@@ -32,6 +32,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema de validación con Zod para el formulario
 // Basado en CreateCustomerDto y UpdateCustomerDto
@@ -76,7 +77,7 @@ export function CustomerFormDialog({
   onSuccess,
   customerData,
 }: CustomerFormDialogProps) {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const isEditMode = !!customerData;
 
   const form = useForm<CustomerFormValues>({
@@ -133,6 +134,7 @@ export function CustomerFormDialog({
         // --- CORRECCIÓN AQUÍ ---
         // Eliminamos 'isActive' del payload antes de enviarlo
         const { isActive, ...createPayload } = payload;
+        console.log(isActive);
         // --- FIN CORRECCIÓN ---
 
         const response = await apiClient.post("/customers", createPayload);
@@ -147,12 +149,13 @@ export function CustomerFormDialog({
       );
       onSuccess(); // Llama al callback para invalidar query y cerrar diálogo
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message ||
-        (isEditMode
-          ? "Error al actualizar el cliente."
-          : "Error al crear el cliente.");
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error ||
+          (isEditMode
+            ? "Error al actualizar el cliente."
+            : "Error al crear el cliente.")
+      );
       toast.error(errorMessage);
     },
   });

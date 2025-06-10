@@ -45,6 +45,7 @@ import { PageHeader } from "@/components/common/page-header";
 import { Loader2, PlusCircle, Trash2, Save, X } from "lucide-react";
 import { format } from "date-fns";
 import { useMemo } from "react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema Zod para una línea de PO
 const poLineSchema = z.object({
@@ -145,10 +146,15 @@ export default function CreatePurchaseOrderPage() {
       queryClient.invalidateQueries({ queryKey: ["purchaseOrders"] }); // Para refrescar la lista
       router.push(`/dashboard/inventory/purchase-orders/${createdPO.id}`); // Ir al detalle de la PO creada
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message || "Error al crear la Orden de Compra.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
+      );
+      toast.error(errorMessage);
+      toast.error(
+        Array.isArray(errorMessage) ? errorMessage.join(", ") : errorMessage
+      );
     },
   });
 

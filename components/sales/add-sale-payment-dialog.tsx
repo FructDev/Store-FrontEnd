@@ -34,12 +34,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-picker"; // Tu componente DatePicker
+// import { DatePicker } from "@/components/ui/date-picker"; // Tu componente DatePicker
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
-import { format } from "date-fns";
+// import { format } from "date-fns";
 import { formatCurrency } from "@/lib/utils/formatters";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 interface AddSalePaymentDialogProps {
   saleId: string;
@@ -137,7 +138,7 @@ export function AddSalePaymentDialog({
   }, [isOpen, amountDue, form, storeAcceptedPaymentMethods]);
 
   const addPaymentMutation = useMutation<
-    any, // Tipo de la respuesta del backend (ej. SalePayment creado o Sale actualizada)
+    unknown, // Tipo de la respuesta del backend (ej. SalePayment creado o Sale actualizada)
     Error,
     AddPaymentFormValues // Los datos del formulario (ya no tienen paymentDate)
   >({
@@ -161,9 +162,16 @@ export function AddSalePaymentDialog({
       toast.success("Pago añadido exitosamente.");
       onPaymentAdded(); // Llama al callback del padre (cierra diálogo, refresca data de la venta)
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Error al añadir el pago.");
-      console.error("Add payment error:", error.response?.data || error);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar el pago de la venta"
+      );
+      console.error(
+        "Error al guardar el pago de la venta:",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 

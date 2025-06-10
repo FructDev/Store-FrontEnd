@@ -59,6 +59,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format as formatDateFn } from "date-fns"; // Para formatear la fecha de devolución
 import { es } from "date-fns/locale";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const paymentMethodLabels: Record<PrismaPaymentMethod, string> = {
   [PrismaPaymentMethod.CASH]: "Efectivo",
@@ -212,7 +213,7 @@ export function ProcessSaleReturnDialog({
   onOpenChange,
   onReturnProcessed,
 }: ProcessSaleReturnDialogProps) {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const storeInfo = useAuthStore((state) => state.user?.store);
   const storeAcceptedPaymentMethods =
     storeInfo?.acceptedPaymentMethods || ALL_PAYMENT_METHODS;
@@ -236,7 +237,7 @@ export function ProcessSaleReturnDialog({
     },
   });
 
-  const { fields: lineFields, replace: replaceLines } = useFieldArray({
+  const { fields: lineFields } = useFieldArray({
     control: form.control,
     name: "lines",
     keyName: "fieldId",
@@ -245,7 +246,6 @@ export function ProcessSaleReturnDialog({
     fields: refundFields,
     append: appendRefund,
     remove: removeRefund,
-    replace: replaceRefunds,
   } = useFieldArray({
     control: form.control,
     name: "refunds",
@@ -336,16 +336,7 @@ export function ProcessSaleReturnDialog({
       }
       return acc;
     }, 0);
-  }, [
-    // Usar JSON.stringify para forzar la detección de cambios en el contenido del array
-    JSON.stringify(
-      (watchedReturnLines || []).map((l) => ({
-        isSelected: l.isSelected,
-        returnQuantity: l.returnQuantity,
-        // unitPrice no necesita estar aquí si no cambia dinámicamente en esta parte del form
-      }))
-    ),
-  ]);
+  }, [watchedReturnLines]);
 
   useEffect(() => {
     if (refundFields.length === 1) {
@@ -368,7 +359,11 @@ export function ProcessSaleReturnDialog({
     }
   }, [calculatedRefundAmount, refundFields.length, form, appendRefund]);
 
-  const returnMutation = useMutation<any, Error, CreateSaleReturnApiPayload>({
+  const returnMutation = useMutation<
+    unknown,
+    Error,
+    CreateSaleReturnApiPayload
+  >({
     mutationFn: async (payload) => {
       if (!sale?.id) throw new Error("ID de venta no disponible.");
       const response = await apiClient.post(
@@ -381,10 +376,13 @@ export function ProcessSaleReturnDialog({
       toast.success("Devolución procesada exitosamente.");
       onReturnProcessed();
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al procesar la devolución."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al procesar la devolución"
       );
+      console.error("Error al procesar la devolucion", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

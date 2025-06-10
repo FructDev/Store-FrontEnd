@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const assembleBundleSchema = z
   .object({
@@ -121,7 +122,7 @@ export function AssembleBundleForm() {
   const mutation = useMutation({
     mutationFn: (data: AssembleBundleFormValues) =>
       apiClient.post("/inventory/stock/assemble-bundle", data),
-    onSuccess: (response: any) => {
+    onSuccess: () => {
       const bundleName =
         bundleProducts?.find((p) => p.id === form.getValues("bundleProductId"))
           ?.name || "Bundle";
@@ -138,10 +139,10 @@ export function AssembleBundleForm() {
       });
       form.reset();
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al ensamblar el bundle."
-      );
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al crear cliente");
+      console.error("Create customer error:", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

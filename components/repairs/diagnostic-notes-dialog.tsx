@@ -4,7 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
 import { RepairOrder } from "@/types/repairs.types"; // Para el tipo de respuesta de la mutación
@@ -29,6 +29,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react"; // React no es siempre necesario importar explícitamente
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 interface DiagnosticNotesDialogProps {
   isOpen: boolean;
@@ -88,13 +89,16 @@ export function DiagnosticNotesDialog({
       onSuccess(); // Llama al callback para refrescar datos en la página padre
       onOpenChange(false); // Cierra este diálogo
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Error al guardar las notas de diagnóstico.";
-      toast.error(
-        Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg.toString()
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar las notas de diagnóstico"
       );
+      console.error(
+        "Error al guardar las notas de diagnóstico:",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 

@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import { Building, Loader2 } from "lucide-react"; // Para el spinner de carga
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Definir el schema de validación con Zod
 const loginFormSchema = z.object({
@@ -79,13 +80,11 @@ export default function LoginPage() {
         router.push("/create-store"); // Si no tiene tienda, a la página de creación de tienda
       }
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       // Manejar errores específicos del backend
-      const errorMessage =
-        error.response?.data?.message ||
-        "Error al iniciar sesión. Verifica tus credenciales.";
+      const errorMessage = getErrorMessage(error, "Error al iniciar sesión");
       toast.error(errorMessage);
-      console.error("Login error:", error.response?.data || error.message);
+      console.error("Login error:", error || errorMessage);
     },
   });
 

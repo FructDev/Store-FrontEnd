@@ -32,6 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch"; // Para isDefault e isActive
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const locationFormSchema = z.object({
   name: z.string().min(2, "Nombre debe tener al menos 2 caracteres.").max(100),
@@ -114,11 +115,13 @@ export function LocationFormDialog({
       onOpenChange(false);
       if (onSuccess) onSuccess();
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        `Error al ${isEditMode ? "actualizar" : "crear"} ubicación.`;
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar la ubicación"
+      );
+      console.error("Error al guardar la ubicacion", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

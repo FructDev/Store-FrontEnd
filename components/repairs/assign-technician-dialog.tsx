@@ -4,7 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
 import { RepairOrder } from "@/types/repairs.types";
@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react"; // React no siempre es necesario
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const NULL_TECHNICIAN_VALUE = "__NULL_TECH__"; // Para la opción "No Asignado"
 
@@ -104,12 +105,10 @@ export function AssignTechnicianDialog({
       onSuccess();
       onOpenChange(false);
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message || "Error al asignar el técnico.";
-      toast.error(
-        Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg.toString()
-      );
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al asignar técnico");
+      console.error("Error al asignar tecnico", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

@@ -22,6 +22,15 @@ export interface RepairLineItem {
   // createdAt, updatedAt
 }
 
+export interface NewCustomerData {
+  firstName?: string | null; // <-- CAMBIO: Añadido '?' y '| null' para hacerlo opcional
+  lastName?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  rnc?: string | null; // RNC o cédula
+  address?: string | null; // Dirección
+}
+
 export interface RepairOrder {
   id: string;
   repairNumber: string; // Generado por el backend
@@ -87,4 +96,19 @@ export interface PaginatedRepairsResponse {
   page: number;
   limit: number;
   totalPages: number;
+}
+
+export interface CreateRepairOrderPayload {
+  customerId?: string | null;
+  newCustomer?: NewCustomerData;
+  deviceBrand: string;
+  deviceModel: string;
+  deviceColor?: string | null;
+  deviceImei?: string | null;
+  devicePassword?: string | null;
+  accessoriesReceived?: string | null;
+  reportedIssue: string;
+  intakeNotes?: string | null;
+  // Para un checklist de objetos con llaves string y valores booleanos
+  intakeChecklist?: Record<string, boolean> | null;
 }

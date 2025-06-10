@@ -32,6 +32,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"; // Par
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const updateQuoteStatusSchema = z.object({
   quoteApproved: z.boolean({
@@ -62,7 +63,7 @@ export function UpdateQuoteStatusDialog({
   onOpenChange,
   repairId,
   currentQuotedAmount,
-  initialApprovalStatus,
+  // initialApprovalStatus,
   decisionToSet, // Esta prop indica la acción (Aprobar/Rechazar)
   onSuccess,
 }: UpdateQuoteStatusDialogProps) {
@@ -104,11 +105,16 @@ export function UpdateQuoteStatusDialog({
       onSuccess(); // Refrescar datos de la página padre
       onOpenChange(false); // Cerrar diálogo
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message ||
-          "Error al actualizar estado de cotización."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar el estado de la cotización"
       );
+      console.error(
+        "Error al guardar el estado de cotizacion",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 

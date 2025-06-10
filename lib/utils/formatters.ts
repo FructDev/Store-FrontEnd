@@ -42,6 +42,7 @@ export const formatCurrency = (
       .replace("USD", currencySymbol)
       .replace("EUR", currencySymbol); // Reemplazar código ISO por símbolo
   } catch (e) {
+    console.log(e);
     // console.error(`formatCurrency: Error formateando: ${numericAmount}`, e);
     // Fallback a un formato simple si Intl no funciona (ej. para símbolos no estándar)
     return `${currencySymbol} ${numericAmount.toFixed(2)}`;
@@ -68,6 +69,7 @@ export const formatDate = (
   try {
     return formatDateFn(date, formatString, { locale: es });
   } catch (e) {
+    console.log(e);
     // console.error(`formatDate: Error formateando: ${dateInput}`, e);
     return String(dateInput);
   }

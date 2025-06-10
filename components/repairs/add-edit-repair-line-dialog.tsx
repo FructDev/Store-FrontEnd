@@ -2,9 +2,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
 import { ProductBasic } from "@/types/inventory.types"; // O desde repairs.types
@@ -47,6 +47,7 @@ import { Loader2, Check, ChevronsUpDown } from "lucide-react";
 import React, { useEffect, useState } from "react"; // React import
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema Zod para el formulario de línea de reparación
 // (Asegúrate que coincida con AddRepairLineDto y UpdateRepairLineDto del backend)
@@ -105,7 +106,7 @@ export function AddEditRepairLineDialog({
   onSuccess,
 }: AddEditRepairLineDialogProps) {
   const isEditMode = !!lineData?.id;
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const [productSearchTerm, setProductSearchTerm] = useState("");
   const debouncedProductSearchTerm = useDebounce(productSearchTerm, 300);
@@ -177,7 +178,7 @@ export function AddEditRepairLineDialog({
         !form.getValues("productId")
       )
         return []; // No buscar si no hay término y no estamos editando con un producto ya seleccionado
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         isActive: true,
         limit: 15,
         // No incluir BUNDLES como repuestos o servicios directos, a menos que se maneje su stock
@@ -240,13 +241,16 @@ export function AddEditRepairLineDialog({
       onSuccess(); // Llama al callback para refrescar la lista de líneas en la página padre
       onOpenChange(false); // Cierra este diálogo
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        `Error al ${isEditMode ? "actualizar" : "añadir"} la línea.`;
-      toast.error(
-        Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg.toString()
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar la línea de reparación"
       );
+      console.error(
+        "Error al guardar la linea de reparacion",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 

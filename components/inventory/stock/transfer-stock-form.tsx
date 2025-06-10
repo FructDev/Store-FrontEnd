@@ -35,6 +35,7 @@ import {
 import { Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const transferStockSchema = z.object({
   productId: z.string().min(1, "Debes seleccionar un producto."),
@@ -198,10 +199,10 @@ export function TransferStockForm() {
     selectedFromLocationId,
   ]);
 
-  const mutation = useMutation<any, Error, TransferStockFormValues>({
+  const mutation = useMutation<unknown, Error, TransferStockFormValues>({
     // Ajusta 'any' a tu tipo de respuesta de /transfer
     mutationFn: (data: TransferStockFormValues) => {
-      const payload: any = {
+      const payload: TransferStockFormValues = {
         productId: data.productId,
         fromLocationId: data.fromLocationId,
         toLocationId: data.toLocationId,
@@ -239,10 +240,13 @@ export function TransferStockForm() {
         notes: "",
       });
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al transferir stock."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar el producto"
       );
+      console.error("Error al cargar el producto", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

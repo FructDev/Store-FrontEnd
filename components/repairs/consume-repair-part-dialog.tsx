@@ -40,6 +40,7 @@ import { Loader2 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils/formatters";
 import { RepairLineItem } from "@/types/repairs.types";
 import { useEffect } from "react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema Zod para el formulario de consumo de parte
 const consumePartSchema = z.object({
@@ -90,7 +91,7 @@ export function ConsumeRepairPartDialog({
       ],
       queryFn: async () => {
         if (!productId) return [];
-        const params: Record<string, any> = {
+        const params: Record<string, unknown> = {
           productId: productId,
           status: PrismaInventoryItemStatus.AVAILABLE,
           limit: 100, // Traer suficientes para seleccionar
@@ -113,7 +114,7 @@ export function ConsumeRepairPartDialog({
   }, [isOpen, form]);
 
   const consumePartMutation = useMutation<
-    any, // El backend podría devolver la RepairLine actualizada o un mensaje
+    unknown, // El backend podría devolver la RepairLine actualizada o un mensaje
     Error,
     ConsumePartFormValues
   >({
@@ -142,10 +143,13 @@ export function ConsumeRepairPartDialog({
       onSuccess();
       onOpenChange(false);
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al consumir el repuesto."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al consumir repuesto del inventario"
       );
+      console.error("Error al consumir repuestos", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

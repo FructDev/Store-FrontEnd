@@ -8,7 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
 import { InventoryLocationBasic, StockCount } from "@/types/inventory.types"; // O types/stock-counts.types
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +37,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const createStockCountSchema = z.object({
   locationId: z.string().optional().nullable(),
@@ -70,7 +71,7 @@ export function CreateStockCountDialog({
   onSuccess,
 }: CreateStockCountDialogProps) {
   const queryClient = useQueryClient();
-  const router = useRouter(); // Para redirigir
+  // const router = useRouter(); // Para redirigir
 
   const form = useForm<CreateStockCountFormValues>({
     resolver: zodResolver(createStockCountSchema),
@@ -119,10 +120,16 @@ export function CreateStockCountDialog({
       onOpenChange(false);
       onSuccess(createdStockCount.id); // Pasar ID para redirección
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al iniciar el conteo."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al iniciar el conteo de stock"
       );
+      console.error(
+        "Error al iniciar el conteo de stock",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 

@@ -65,6 +65,7 @@ const formatDate = (dateString?: string | Date | null) => {
   try {
     return format(new Date(dateString), "dd/MM/yyyy HH:mm", { locale: es });
   } catch (e) {
+    console.log(e);
     return String(dateString); // Fallback
   }
 };

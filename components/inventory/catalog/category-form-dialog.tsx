@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, PlusCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const categoryFormSchema = z.object({
   name: z
@@ -133,11 +134,13 @@ export function CategoryFormDialog({
       // No resetear aquí si queremos que el usuario vea los datos guardados si reabre
       // El reset ya se hace en el useEffect cuando isOpen o category cambia.
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        `Error al ${isEditMode ? "actualizar" : "crear"} categoría.`;
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar la categoría"
+      );
+      console.error("Error al guardar la categoría", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

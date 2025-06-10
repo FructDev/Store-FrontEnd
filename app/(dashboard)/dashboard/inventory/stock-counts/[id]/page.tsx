@@ -2,9 +2,9 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
-import { StockCount, StockCountLine, Product } from "@/types/inventory.types"; // Product para line.product
+import { StockCount, StockCountLine } from "@/types/inventory.types"; // Product para line.product
 import { PageHeader } from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -30,14 +30,14 @@ import {
   Save,
   CheckCircle,
   Loader2,
-  AlertCircle,
+  // AlertCircle,
   FileX2,
-  Info,
+  // Info,
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { toast } from "sonner";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { StockCountStatus as PrismaStockCountStatus } from "@/types/prisma-enums";
 import {
   AlertDialog,
@@ -50,6 +50,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils"; // Para clases condicionales
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const statusLabels: Record<PrismaStockCountStatus, string> = {
   PENDING: "Pendiente",
@@ -66,6 +67,7 @@ const formatDateForDisplay = (
   try {
     return format(new Date(dateInput), customFormat, { locale: es });
   } catch (e) {
+    console.log(e);
     return String(dateInput);
   }
 };
@@ -180,10 +182,11 @@ export default function StockCountDetailPage() {
       // Considerar si refetchStockCount() es necesario o si la actualización local es suficiente
       // queryClient.invalidateQueries({ queryKey: ["stockCountDetails", stockCountId] });
     },
-    onError: (error: any, variables) => {
+    onError: (error: unknown, variables) => {
+      const errorMessage = getErrorMessage(error, "Error al guardar línea");
       toast.error(
         `Error al guardar línea ${variables.lineId}: ${
-          error.response?.data?.message || "Error desconocido."
+          errorMessage || "Error desconocido."
         }`
       );
     },
@@ -205,10 +208,9 @@ export default function StockCountDetailPage() {
       refetchStockCount(); // Refrescar toda la data del conteo
       setIsFinalizeConfirmationOpen(false);
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al finalizar el conteo."
-      );
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al finalizar conteo");
+      toast.error(errorMessage || "Error al finalizar el conteo.");
       setIsFinalizeConfirmationOpen(false);
     },
   });
@@ -277,12 +279,9 @@ export default function StockCountDetailPage() {
       // Podríamos hacer un refetchStockCount() general al final si es más simple que manejar el estado local
       // o confiar en que los onSuccess individuales de updateLineMutation actualizaron editableLines
       refetchStockCount(); // Para asegurar consistencia
-    } catch (error: any) {
-      toast.error(
-        `Error al guardar todas las líneas: ${
-          error.message || "Error desconocido"
-        }`
-      );
+    } catch (error: unknown) {
+      const errorMessage = getErrorMessage(error, "Error al guardar líneas");
+      toast.error(errorMessage);
     } finally {
       setIsSavingAll(false);
     }
@@ -299,9 +298,9 @@ export default function StockCountDetailPage() {
     setIsFinalizeConfirmationOpen(true);
   };
 
-  const currentStatus = stockCount?.status as
-    | PrismaStockCountStatus
-    | undefined;
+  // const currentStatus = stockCount?.status as
+  //   | PrismaStockCountStatus
+  //   | undefined;
 
   const confirmFinalize = () => {
     // Podrías añadir un input para notas finales en el AlertDialog si el backend lo soporta

@@ -94,7 +94,7 @@ export default function RepairsStatusChart({
   const chartData = useMemo(() => {
     if (!overview?.byStatus) return [];
     return Object.entries(overview.byStatus)
-      .filter(([status, count]) => count > 0) // Solo estados con conteo > 0
+      .filter(([, count]) => count > 0) // Solo estados con conteo > 0
       .map(([status, count]) => ({
         name: repairStatusLabels[status as PrismaRepairStatus] || status,
         value: count,

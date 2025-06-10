@@ -34,6 +34,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema Zod para editar (sin password, email podría ser readonly o no editable)
 const editUserFormSchema = z.object({
@@ -101,10 +102,13 @@ export function EditUserDialog({
       queryClient.invalidateQueries({ queryKey: ["storeUsers"] });
       onOpenChange(false); // Cerrar diálogo
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message || "Error al actualizar usuario.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el usuario"
+      );
+      console.error("Update user error", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

@@ -2,14 +2,14 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
 import { PageHeader } from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -46,29 +46,30 @@ import {
   CommandGroup,
 } from "@/components/ui/command";
 import { DataTablePagination } from "@/components/common/data-table-pagination";
-import { ScrollArea } from "@/components/ui/scroll-area";
+// import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 
 import { format, startOfMonth, endOfMonth, parseISO, subDays } from "date-fns";
-import { es } from "date-fns/locale";
+// import { es } from "date-fns/locale";
 import {
   Filter,
-  Search,
+  // Search,
   XCircle,
   Download,
   ChevronsUpDown,
-  Check,
-  Wrench,
-  ArrowUpDown,
+  // Check,
+  // Wrench,
+  // ArrowUpDown,
   SortAsc,
   SortDesc,
 } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 
 import {
+  FindInventoryReportParams,
   PaginatedRepairsReport,
   ReportRepairItem,
 } from "@/types/reports.types"; // Importar RepairsReportSortBy
@@ -166,7 +167,7 @@ export default function DetailedRepairsReportPage() {
 
   // --- Query Principal para el Reporte ---
   const queryParams = useMemo(() => {
-    const params: any = {
+    const params: FindInventoryReportParams = {
       startDate: dateRange?.from
         ? format(dateRange.from, "yyyy-MM-dd")
         : undefined, // Enviar undefined si no hay fecha

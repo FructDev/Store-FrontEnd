@@ -39,6 +39,7 @@ import {
 import { Switch } from "@/components/ui/switch"; // Para isActive
 import { Loader2, PlusCircle } from "lucide-react";
 import { useState } from "react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema de validación con Zod (similar al CreateUserDto del backend)
 const createUserFormSchema = z.object({
@@ -99,14 +100,10 @@ export function CreateUserDialog() {
       setIsOpen(false);
       form.reset();
     },
-    onError: (error: any) => {
-      console.error("mutationFn: Error", error.response?.data || error.message); // DEBUG
-      const errorMsg =
-        error.response?.data?.message || "Error al crear usuario.";
-      const displayMessage = Array.isArray(errorMsg)
-        ? errorMsg.join(", ")
-        : errorMsg;
-      toast.error(displayMessage);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al crear el usuario");
+      console.error("Create user error", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

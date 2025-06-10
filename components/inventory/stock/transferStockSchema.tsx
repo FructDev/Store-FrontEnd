@@ -40,3 +40,4 @@ const transferStockSchema = z
       // Path podría ser 'imei' o 'quantity' pero es una validación a nivel de objeto
     }
   );
+console.log(typeof transferStockSchema);

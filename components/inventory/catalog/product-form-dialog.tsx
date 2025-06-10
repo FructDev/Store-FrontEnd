@@ -2,13 +2,21 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import * as z from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
-import { Product, Category, Supplier } from "@/types/inventory.types";
-import { ProductType as PrismaProductType } from "@/types/prisma-enums"; // Usa tu enum local
+import {
+  Product,
+  Category,
+  Supplier,
+  ProductApiPayload,
+} from "@/types/inventory.types";
+import {
+  ProductType as PrismaProductType,
+  ProductType,
+} from "@/types/prisma-enums"; // Usa tu enum local
 import { Prisma } from "@prisma/client"; // Para Prisma.JsonNull
 
 import { Button } from "@/components/ui/button";
@@ -42,6 +50,7 @@ import { Switch } from "@/components/ui/switch";
 import { Loader2, PlusCircle, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const productTypeLabels: Record<PrismaProductType, string> = {
   GENERAL: "General",
@@ -189,7 +198,7 @@ export function ProductFormDialog({
     },
   });
 
-  const { fields, append, remove, replace } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     // Añadir replace
     control: form.control,
     name: "bundleComponentsData",
@@ -204,10 +213,10 @@ export function ProductFormDialog({
     name: "attributesArray",
   });
 
-  const [productToAction, setProductToAction] = useState<Product | null>(null);
-  const [isDeactivateActivateDialogOpen, setIsDeactivateActivateDialogOpen] =
-    useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  // const [productToAction, setProductToAction] = useState<Product | null>(null);
+  // const [isDeactivateActivateDialogOpen, setIsDeactivateActivateDialogOpen] =
+  //   useState(false);
+  // const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const watchedProductType = form.watch("productType");
 
@@ -318,7 +327,7 @@ export function ProductFormDialog({
           reorderLevel: product.reorderLevel ?? null,
           idealStockLevel: product.idealStockLevel ?? null,
           attributesArray: product.attributes // Asumimos que product.attributes es Record<string, any>
-            ? Object.entries(product.attributes as Record<string, any>).map(
+            ? Object.entries(product.attributes as Record<string, unknown>).map(
                 ([key, value]) => ({ key, value: String(value) })
               )
             : [],
@@ -357,53 +366,43 @@ export function ProductFormDialog({
 
   const mutation = useMutation<Product, Error, ProductFormValues>({
     mutationFn: async (formData: ProductFormValues) => {
-      const apiData: any = { ...formData };
-      delete apiData.attributesArray;
-
-      if (formData.attributesArray && formData.attributesArray.length > 0) {
-        apiData.attributes = formData.attributesArray.reduce((obj, item) => {
-          if (item.key) {
-            // Solo añadir si la clave tiene un valor
+      // 1. Transformamos el array de atributos (tu lógica original es correcta)
+      const attributesObject = (formData.attributesArray || []).reduce(
+        (obj, item) => {
+          if (item.key && item.key.trim()) {
             obj[item.key.trim()] = item.value;
           }
           return obj;
-        }, {} as Record<string, unknown>);
-      } else {
-        apiData.attributes = Prisma.JsonNull; // O null si prefieres
+        },
+        {} as Record<string, string>
+      );
+
+      // 2. Desestructuramos para quitar el array del formulario
+      const { attributesArray, ...restOfFormData } = formData;
+      console.log(typeof attributesArray);
+
+      // 3. Construimos el payload final. YA NO NECESITAMOS SANITIZAR.
+      // Zod y el preprocess ya se encargaron de convertir "" a null/undefined.
+      const payload: ProductApiPayload = {
+        ...restOfFormData,
+        attributes:
+          Object.keys(attributesObject).length > 0 ? attributesObject : null,
+        // Los campos como sellingPrice ya vienen como 'number' o 'null' desde el formulario.
+      };
+
+      // 4. Tu lógica de bundles se mantiene
+      if (payload.productType !== ProductType.BUNDLE) {
+        payload.bundleComponentsData = [];
       }
 
-      if (apiData.productType !== PrismaProductType.BUNDLE) {
-        apiData.bundleComponentsData = [];
-      } else {
-        // Asegurar que los componentes no estén vacíos si es bundle
-        if (
-          !apiData.bundleComponentsData ||
-          apiData.bundleComponentsData.length === 0
-        ) {
-          // No lanzar error, el backend lo validará si es mandatorio
-          // O puedes añadir una validación Zod con refine al schema principal
-        }
-      }
-
-      // Convertir campos numéricos opcionales a null si están vacíos
-      (
-        [
-          "costPrice",
-          "sellingPrice",
-          "reorderLevel",
-          "idealStockLevel",
-        ] as const
-      ).forEach((key) => {
-        if (apiData[key] === "") apiData[key] = null;
-      });
-
+      // 5. Llamada a la API
       const url =
         isEditMode && product
           ? `/inventory/products/${product.id}`
           : "/inventory/products";
       const method = isEditMode ? "patch" : "post";
 
-      const response = await apiClient[method]<Product>(url, apiData);
+      const response = await apiClient[method]<Product>(url, payload);
       return response.data;
     },
     onSuccess: (savedProduct) => {
@@ -419,11 +418,13 @@ export function ProductFormDialog({
       onOpenChange(false);
       if (onSuccess) onSuccess();
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        `Error al ${isEditMode ? "actualizar" : "crear"} producto.`;
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar el producto"
+      );
+      console.error("Error al guardar el producto", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

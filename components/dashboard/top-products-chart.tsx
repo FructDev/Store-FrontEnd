@@ -104,7 +104,7 @@ export default function TopProductsChart({
       .reverse(); // Invertir para que el más alto esté arriba en el gráfico horizontal
   }, [topProducts, orderBy]);
 
-  const xAxisTickFormatter = (value: any) => {
+  const xAxisTickFormatter = (value: never) => {
     return orderBy === "revenue" ? formatCurrency(value, "", 0) : value; // Formato corto para eje
   };
 

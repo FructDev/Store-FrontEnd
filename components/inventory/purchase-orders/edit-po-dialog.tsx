@@ -25,7 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -38,6 +38,7 @@ import { DatePicker } from "@/components/ui/date-picker"; // Tu componente DateP
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { format } from "date-fns"; // Para formatear fechas para el DTO backend
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const NULL_SELECT_VALUE = "__NULL_VALUE__"; // Para Selects opcionales
 
@@ -152,11 +153,16 @@ export function EditPODialog({
       onOpenChange(false); // Cerrar diálogo
       if (onSuccess) onSuccess();
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Error al actualizar la Orden de Compra.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar la Orden de Compra"
+      );
+      console.error(
+        "Error al actualizar la Orden de Compra",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 

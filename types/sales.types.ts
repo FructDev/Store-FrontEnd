@@ -185,6 +185,7 @@ export interface EnrichedSaleDetailed {
   totalSaleProfit?: number | null; // Calculado: taxableAmount - totalCostOfGoodsSold (o una definición similar)
 
   ncf?: string | null; // Si lo tienes
+  rnc?: string | null; // Si lo tienes
   linkedRepairId?: string | null;
   createdAt: string | Date;
   updatedAt: string | Date;

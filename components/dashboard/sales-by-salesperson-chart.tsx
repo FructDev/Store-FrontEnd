@@ -118,7 +118,7 @@ export default function SalesBySalespersonChart({
     // No es necesario .reverse() para BarChart vertical si el eje X es la categoría
   }, [salesBySalesperson, orderBy]);
 
-  const xAxisTickFormatter = (value: any) => {
+  const xAxisTickFormatter = (value: never) => {
     return orderBy === "totalSalesAmount"
       ? formatCurrency(value, "", 0)
       : value;
@@ -190,6 +190,7 @@ export default function SalesBySalespersonChart({
                 }}
                 formatter={(value: number, nameKey: string, props) => {
                   const { payload } = props;
+                  console.log(typeof payload);
                   const label =
                     orderBy === "totalSalesAmount"
                       ? "Monto Total:"

@@ -43,6 +43,7 @@ import React, { useEffect, useMemo } from "react";
 import { formatCurrency } from "@/lib/utils/formatters";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const paymentMethodLabels: Record<PrismaPaymentMethod, string> = {
   CASH: "Efectivo",
@@ -103,6 +104,7 @@ const factureRepairFormSchema = z
     // El monto total a pagar se pasará como prop y se usará para validar la suma de los pagos
   })
   .refine((data) => {
+    console.log(typeof data);
     // La validación de que la suma de pagos cubra el total se hará en onSubmit
     return true;
   });
@@ -228,12 +230,16 @@ export function FactureRepairDialog({
       onSuccess(createdSale); // Llama al callback (refresca datos de reparación, redirige a venta, etc.)
       onOpenChange(false); // Cierra este diálogo
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message || "Error al facturar la reparación.";
-      toast.error(
-        Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg.toString()
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar el proveedor"
       );
+      console.error(
+        "Error al guardar el proveedor. Inténtalo de nuevo.",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 

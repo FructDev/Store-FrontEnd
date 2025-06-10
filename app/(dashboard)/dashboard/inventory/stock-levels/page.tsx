@@ -12,7 +12,7 @@ import {
 } from "@/types/inventory.types";
 import {
   InventoryItemStatus as PrismaInventoryItemStatus,
-  ProductType as PrismaProductType,
+  // ProductType as PrismaProductType,
 } from "@/types/prisma-enums";
 
 import { PageHeader } from "@/components/common/page-header";
@@ -112,7 +112,7 @@ export default function StockLevelsPage() {
       filterTracksImei,
     ],
     queryFn: async () => {
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         limit: limitPerPage,
         sortBy: "productName",

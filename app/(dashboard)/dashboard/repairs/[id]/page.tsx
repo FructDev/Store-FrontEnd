@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo } from "react"; // useEffect no es necesario por ahora
 import { useParams, useRouter } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
 import {
   RepairOrder,
@@ -72,6 +72,7 @@ import {
   postRepairChecklistItems,
 } from "@/components/repairs/completion-details-dialog";
 import { FactureRepairDialog } from "@/components/repairs/facture-repair-dialog";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 // No importamos los diálogos aún, solo sus placeholders de acción
 
 // Mapeo para estados de Reparación
@@ -149,7 +150,10 @@ export default function RepairOrderDetailPage() {
       const data = response.data;
 
       // Parsear montos que vienen como string del backend (si es el caso)
-      const safeParse = (val: any, def: number | null = null): number | null =>
+      const safeParse = (
+        val: unknown,
+        def: number | null = null
+      ): number | null =>
         val !== null && val !== undefined ? parseFloat(String(val)) : def;
 
       data.quotedAmount = safeParse(data.quotedAmount);
@@ -186,8 +190,13 @@ export default function RepairOrderDetailPage() {
       toast.success("Línea de reparación eliminada.");
       refetchRepairOrder(); // Refrescar para actualizar la lista de líneas
     },
-    onError: (err: any) =>
-      toast.error(err.response?.data?.message || "Error al eliminar línea."),
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
+      );
+      toast.error(errorMessage);
+    },
   });
 
   // --- Handlers para Abrir Diálogos ---
@@ -367,14 +376,14 @@ export default function RepairOrderDetailPage() {
   // 5. ¿Se pueden realizar acciones de reparación (ej. consumir repuestos)?
   // Renombrada de 'canStartRepairActions' para mayor claridad.
   // Condición: Cotización aprobada, o esperando partes, o ya en reparación/ensamblaje/QC.
-  const canPerformRepairActions = // Usarías esta para el botón "Consumir Repuesto" por línea, por ejemplo
-    [
-      PrismaRepairStatus.QUOTE_APPROVED,
-      PrismaRepairStatus.AWAITING_PARTS,
-      PrismaRepairStatus.IN_REPAIR,
-      PrismaRepairStatus.ASSEMBLING,
-      PrismaRepairStatus.TESTING_QC, // Aún se podrían consumir partes si algo falló y se re-repara
-    ].includes(repairOrder.status) && !isClosedOrCancelledOrUnrepairable;
+  // const canPerformRepairActions = // Usarías esta para el botón "Consumir Repuesto" por línea, por ejemplo
+  //   [
+  //     PrismaRepairStatus.QUOTE_APPROVED,
+  //     PrismaRepairStatus.AWAITING_PARTS,
+  //     PrismaRepairStatus.IN_REPAIR,
+  //     PrismaRepairStatus.ASSEMBLING,
+  //     PrismaRepairStatus.TESTING_QC, // Aún se podrían consumir partes si algo falló y se re-repara
+  //   ].includes(repairOrder.status) && !isClosedOrCancelledOrUnrepairable;
 
   // 6. ¿Se pueden registrar detalles de finalización (notas, garantía, checklist post-reparación)?
   // Condición: Desde que está en reparación hasta que se completa internamente.
@@ -390,9 +399,9 @@ export default function RepairOrderDetailPage() {
   // Esto usualmente lo hace el botón "Actualizar Estado" abriendo el diálogo.
   // La lógica de qué estados pueden transicionar a PENDING_PICKUP estaría en el diálogo o backend.
   // Pero si tienes un botón específico "Marcar como Listo para Retiro":
-  const canMarkReadyForPickup = // Esta variable controla la visibilidad de ESE botón específico
-    repairOrder.status === PrismaRepairStatus.REPAIR_COMPLETED && // Solo si la reparación está internamente completa
-    !isClosedOrCancelledOrUnrepairable;
+  // const canMarkReadyForPickup = // Esta variable controla la visibilidad de ESE botón específico
+  //   repairOrder.status === PrismaRepairStatus.REPAIR_COMPLETED && // Solo si la reparación está internamente completa
+  //   !isClosedOrCancelledOrUnrepairable;
 
   // 8. ¿Se puede facturar y entregar al cliente?
   // Condición: Estado es PENDING_PICKUP y aún no se ha facturado (no hay saleId).

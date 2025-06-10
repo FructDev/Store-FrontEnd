@@ -66,6 +66,7 @@ import { ProductType as PrismaProductType } from "@/types/prisma-enums"; // Para
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ProductFormDialog } from "@/components/inventory/catalog/product-form-dialog";
 import { ProductStockDetailsDialog } from "@/components/inventory/stock/product-stock-details-dialog";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Mapeo para mostrar nombres de ProductType más amigables
 const productTypeLabels: Record<PrismaProductType, string> = {
@@ -121,7 +122,7 @@ export default function ProductsPage() {
       filterIsActive,
     ],
     queryFn: async () => {
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         limit: limitPerPage,
         sortBy: "name",
@@ -167,11 +168,12 @@ export default function ProductsPage() {
       setIsDeactivateActivateDialogOpen(false);
       setProductToAction(null);
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message ||
-          "Error al actualizar estado del producto."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
       );
+      toast.error(errorMessage || "Error al actualizar estado del producto.");
       setIsDeactivateActivateDialogOpen(false);
       setProductToAction(null);
     },
@@ -191,10 +193,12 @@ export default function ProductsPage() {
       setIsDeleteDialogOpen(false);
       setProductToAction(null);
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al eliminar producto."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
       );
+      toast.error(errorMessage);
       setIsDeleteDialogOpen(false);
       setProductToAction(null);
     },

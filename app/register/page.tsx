@@ -10,7 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import apiClient from "@/lib/api"; // Nuestro cliente Axios
-import { User } from "@/stores/auth.store"; // Usamos el tipo User si la API devuelve el usuario
+// import { User } from "@/stores/auth.store"; // Usamos el tipo User si la API devuelve el usuario
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,16 +22,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardFooter,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
 import { Building, CheckCircle, Loader2 } from "lucide-react";
 import { FaGoogle } from "react-icons/fa";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema de validación con Zod
 const registerFormSchema = z
@@ -105,18 +106,18 @@ export default function RegisterPage() {
     },
     onSuccess: (data) => {
       toast.success("¡Registro exitoso! Ahora puedes iniciar sesión.");
+      console.log(typeof data, data);
       router.push("/login"); // Redirigir a la página de login
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message ||
-        "Error en el registro. Inténtalo de nuevo.";
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al generar el PDF.");
+      toast.error(errorMessage);
       // Si el mensaje es un array (como a veces devuelve class-validator), lo unimos.
       const displayMessage = Array.isArray(errorMessage)
         ? errorMessage.join(", ")
         : errorMessage;
       toast.error(displayMessage);
-      console.error("Register error:", error.response?.data || error.message);
+      console.error("Register error:", error || errorMessage);
     },
   });
 

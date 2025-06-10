@@ -20,15 +20,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
 import { Loader2, PartyPopper, Rocket } from "lucide-react";
 import { useEffect } from "react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema de validación con Zod para el nombre de la tienda
 const createStoreFormSchema = z.object({
@@ -106,14 +107,10 @@ export default function CreateStorePage() {
 
       router.push("/dashboard"); // Redirigir al dashboard
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message || "Error al crear la tienda.";
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al crear la tienda");
       toast.error(errorMessage);
-      console.error(
-        "Create store error:",
-        error.response?.data || error.message
-      );
+      console.error("Create store error:", error || errorMessage);
     },
   });
 

@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, PlusCircle } from "lucide-react";
 import React, { useEffect } from "react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema Zod para el formulario de proveedor (refleja CreateSupplierDto y UpdateSupplierDto)
 const supplierFormSchema = z.object({
@@ -137,11 +138,16 @@ export function SupplierFormDialog({
       onOpenChange(false); // Cerrar diálogo
       if (onSuccess) onSuccess();
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        `Error al ${isEditMode ? "actualizar" : "crear"} proveedor.`;
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar el proveedor. Inténtalo de nuevo."
+      );
+      console.error(
+        "Error al guardar el proveedor. Inténtalo de nuevo.",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 

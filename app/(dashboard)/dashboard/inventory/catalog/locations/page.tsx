@@ -53,6 +53,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Card, CardContent } from "@/components/ui/card";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 export default function LocationsPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -83,7 +84,7 @@ export default function LocationsPage() {
       debouncedSearchTerm,
     ],
     queryFn: async () => {
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         limit: limitPerPage,
       };
@@ -103,11 +104,14 @@ export default function LocationsPage() {
       setIsDeleteDialogOpen(false);
       setLocationToDelete(null);
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Error al eliminar ubicación. Puede estar en uso o contener stock.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
+      );
+      toast.error(
+        Array.isArray(errorMessage) ? errorMessage.join(", ") : errorMessage
+      );
       setIsDeleteDialogOpen(false);
       setLocationToDelete(null);
     },

@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useDebounce } from "@/hooks/use-debounce"; // Hook simple para debounce (crear este hook)
 import { Card, CardContent } from "@/components/ui/card";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 interface PaginatedUsersResponse {
   data: User[];
@@ -105,7 +106,7 @@ export default function UsersPage() {
       filterRoleName,
     ],
     queryFn: async () => {
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         limit: limitPerPage,
         sortBy: "createdAt", // Opcional: hacer configurable
@@ -135,11 +136,9 @@ export default function UsersPage() {
       setIsConfirmStatusDialogOpen(false);
       setUserForStatusChange(null);
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Error al actualizar estado del usuario.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al generar el PDF.");
+      toast.error(errorMessage);
       setIsConfirmStatusDialogOpen(false);
       setUserForStatusChange(null);
     },

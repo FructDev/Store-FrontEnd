@@ -6,13 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
 import { PageHeader } from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -33,13 +27,14 @@ import { DataTablePagination } from "@/components/common/data-table-pagination";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 
-import { Filter, XCircle, Download, ShoppingCart } from "lucide-react";
+import { Filter, XCircle, Download } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatCurrency } from "@/lib/utils/formatters"; // Si muestras algún valor monetario
+// import { formatCurrency } from "@/lib/utils/formatters"; // Si muestras algún valor monetario
 
 import {
+  FindInventoryReportParams,
   PaginatedLowStockReport,
-  ReportLowStockItem,
+  // ReportLowStockItem,
 } from "@/types/reports.types";
 import {
   Category,
@@ -63,7 +58,7 @@ export default function LowStockReportPage() {
   );
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limitPerPage, setLimitPerPage] = useState(25);
+  const [limitPerPage] = useState(25);
 
   // --- Fetch para Selectores de Filtro ---
   const { data: categories, isLoading: isLoadingCategories } = useQuery<
@@ -96,7 +91,7 @@ export default function LowStockReportPage() {
 
   // --- Query Principal para el Reporte ---
   const queryParams = useMemo(() => {
-    const params: any = {
+    const params: FindInventoryReportParams = {
       page: currentPage,
       limit: limitPerPage,
     };

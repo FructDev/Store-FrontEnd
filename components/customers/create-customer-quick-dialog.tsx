@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { Textarea } from "../ui/textarea";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schema Zod para el formulario de creación rápida de cliente
 // Ajusta según los campos que tu CreateCustomerDto del backend espera como mínimos/opcionales
@@ -129,10 +130,10 @@ export function CreateCustomerDialog({
       onOpenChange(false); // Cerrar este diálogo
       onSuccess(newCustomer); // Llamar al callback con el nuevo cliente
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message || "Error al crear el cliente.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al crear cliente");
+      console.error("Create customer error:", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

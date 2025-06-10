@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/common/page-header";
 import { DataTablePagination } from "@/components/common/data-table-pagination";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
 import { RepairOrder, PaginatedRepairsResponse } from "@/types/repairs.types"; // Tus tipos
 import { CustomerBasic } from "@/types/customer.types";
@@ -85,6 +85,7 @@ const formatCurrency = (
       .format(numericAmount)
       .replace("DOP", currencySymbol); // Reemplazar código ISO por símbolo si es necesario
   } catch (e) {
+    console.log(e);
     return `${currencySymbol} ${numericAmount.toFixed(2)}`; // Fallback simple
   }
 };
@@ -147,7 +148,7 @@ export default function RepairsListPage() {
       dateRange?.to?.toISOString(), // Usar ISOString para la queryKey si es más estable
     ],
     queryFn: async () => {
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         limit: limitPerPage,
         sortBy: "receivedAt", // O el campo que uses para fecha de recepción en RepairOrder

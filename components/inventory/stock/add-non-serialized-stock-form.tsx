@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const addNonSerializedStockSchema = z.object({
   productId: z.string().min(1, "Debes seleccionar un producto."),
@@ -93,10 +94,10 @@ export function AddNonSerializedStockForm() {
       });
       form.reset();
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message || "Error al añadir stock.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al añadir stock");
+      console.error("Error al anadir a stock", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

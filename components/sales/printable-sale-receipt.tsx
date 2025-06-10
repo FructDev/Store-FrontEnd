@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { EnrichedSaleDetailed } from "@/types/sales.types";
+import { EnrichedSaleDetailed, SaleFromAPI } from "@/types/sales.types";
 import { StoreSettings } from "@/types/settings.types";
 import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 import { Separator } from "@/components/ui/separator";
@@ -127,8 +127,8 @@ export function PrintableSaleReceipt({
           <section className="text-[10pt] text-left">
             <div className="font-semibold">Cliente:</div>
             <div>{sale.customerName}</div>
-            {(sale.customer as any).rnc && (
-              <div>RNC/ID: {(sale.customer as any).rnc}</div>
+            {(sale.customer as EnrichedSaleDetailed).rnc && (
+              <div>RNC/ID: {(sale.customer as EnrichedSaleDetailed).rnc}</div>
             )}
             {sale.customer.phone && <div>Tel: {sale.customer.phone}</div>}
           </section>

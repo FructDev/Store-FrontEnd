@@ -18,20 +18,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+// import {
+//   Accordion,
+//   AccordionContent,
+//   AccordionItem,
+//   AccordionTrigger,
+// } from "@/components/ui/accordion";
 import {
   ArrowRight,
   CheckCircle,
-  BarChart2,
-  Archive,
-  Wrench,
+  // BarChart2,
+  // Archive,
+  // Wrench,
   Loader2,
-  Building,
+  // Building,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 

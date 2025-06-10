@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useDebounce } from "@/hooks/use-debounce"; // Asumiendo que tienes este hook
 import { Card, CardContent } from "@/components/ui/card";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 export default function SuppliersPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,7 +80,7 @@ export default function SuppliersPage() {
       debouncedSearchTerm,
     ],
     queryFn: async () => {
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         limit: limitPerPage,
       };
@@ -99,11 +100,14 @@ export default function SuppliersPage() {
       setIsDeleteDialogOpen(false);
       setSupplierToDelete(null);
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Error al eliminar proveedor. Es posible que esté en uso.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
+      );
+      toast.error(
+        Array.isArray(errorMessage) ? errorMessage.join(", ") : errorMessage
+      );
       setIsDeleteDialogOpen(false);
       setSupplierToDelete(null);
     },

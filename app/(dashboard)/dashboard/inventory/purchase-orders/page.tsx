@@ -70,6 +70,7 @@ import {
   AlertDialogHeader,
 } from "@/components/ui/alert-dialog";
 import { EditPODialog } from "@/components/inventory/purchase-orders/edit-po-dialog";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Mapeo para estados de PO
 const poStatusLabels: Record<PrismaPurchaseOrderStatus, string> = {
@@ -88,6 +89,7 @@ const formatDisplayDate = (dateString?: string | Date | null) => {
   try {
     return format(new Date(dateString), "dd/MM/yyyy", { locale: es });
   } catch (e) {
+    console.log(e);
     return String(dateString);
   }
 };
@@ -141,7 +143,7 @@ export default function PurchaseOrdersPage() {
       dateRange?.to,
     ],
     queryFn: async () => {
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         limit: limitPerPage,
         sortBy: "createdAt", // O por orderDate
@@ -197,10 +199,12 @@ export default function PurchaseOrdersPage() {
       setIsCancelPODialogOpen(false);
       setPoToCancel(null);
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al cancelar la Orden de Compra."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
       );
+      toast.error(errorMessage);
       setIsCancelPODialogOpen(false);
       setPoToCancel(null);
     },

@@ -4,7 +4,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import * as z from "zod";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
 import {
@@ -43,6 +43,7 @@ import { Loader2, PlusCircle, Trash2 } from "lucide-react";
 import React, { useEffect, useMemo } from "react";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Card } from "@/components/ui/card";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 interface ReceiveStockDialogProps {
   poId: string;
@@ -216,7 +217,7 @@ export function ReceiveStockDialog({
         .then((res) => res.data.data || res.data),
   });
 
-  const mutation = useMutation<any, Error, ReceiveStockApiPayload>({
+  const mutation = useMutation<unknown, Error, ReceiveStockApiPayload>({
     mutationFn: async (payload: ReceiveStockApiPayload) => {
       // Recibe el payload ya construido
       if (!line) throw new Error("Línea de PO no seleccionada.");
@@ -235,12 +236,10 @@ export function ReceiveStockDialog({
       );
       onStockReceived(); // Llama al callback del padre (para invalidar query de PO y cerrar diálogo)
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Error al registrar recepción de stock.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
-      console.error("Receive stock error:", error.response?.data || error);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al recibir stock");
+      console.error("Error al resivir stock", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

@@ -68,11 +68,12 @@ import {
 
 import React from "react";
 import { useAuthStore } from "@/stores/auth.store";
-import { ScrollArea } from "@/components/ui/scroll-area";
+// import { ScrollArea } from "@/components/ui/scroll-area";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { StoreSettings } from "@/types/settings.types";
 import { ReceiptPaperSize } from "@/components/sales/printable-sale-receipt";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Mapeo para estados de Venta (ya lo teníamos en la página de listado)
 const saleStatusLabels: Record<PrismaSaleStatus, string> = {
@@ -114,7 +115,7 @@ export default function SaleDetailPage() {
   const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
   const [selectedPaperSize, setSelectedPaperSize] =
     useState<ReceiptPaperSize>("POS_RECEIPT_80MM"); // Default a 80mm
-  const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
+  // const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [pdfPreviewSrc, setPdfPreviewSrc] = useState<string | null>(null); // Estado solo para el 'src' del iframe
   const pdfUrlRef = useRef<string | null>(null);
@@ -150,6 +151,7 @@ export default function SaleDetailPage() {
     }),
     [currentStoreSettings]
   );
+  console.log(typeof storeSettings.defaultTaxRate);
 
   const {
     data: sale, // sale será de tipo EnrichedSaleDetailed
@@ -321,10 +323,9 @@ export default function SaleDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["salesList"] }); // Refrescar la lista de ventas general
       setIsCancelSaleDialogOpen(false); // Cerrar el diálogo de confirmación
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al cancelar la venta."
-      );
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(error, "Error al generar el PDF.");
+      toast.error(errorMessage);
       setIsCancelSaleDialogOpen(false);
     },
   });
@@ -403,11 +404,12 @@ export default function SaleDetailPage() {
         const url = URL.createObjectURL(blob);
         pdfUrlRef.current = url; // Guardar la nueva URL en la ref
         setPdfPreviewSrc(url); // Actualizar el estado del 'src' para que el iframe se re-renderice
-      } catch (err: any) {
-        console.error("Error generando PDF para previsualización:", err);
-        toast.error(
-          err.response?.data?.message || "No se pudo generar el documento."
+      } catch (err: unknown) {
+        const errorMessage = await getErrorMessage(
+          err,
+          "Error al generar el PDF."
         );
+        toast.error(errorMessage);
         setIsPrintDialogOpen(false);
       } finally {
         setIsGeneratingPdf(false);

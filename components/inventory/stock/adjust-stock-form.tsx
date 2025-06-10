@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const adjustmentReasons = [
   "Conteo físico - Excedente",
@@ -173,7 +174,7 @@ export function AdjustStockForm() {
   const mutation = useMutation({
     mutationFn: (data: AdjustStockFormValues) =>
       apiClient.post("/inventory/stock/adjust", data),
-    onSuccess: (response: any) => {
+    onSuccess: (response: unknown) => {
       const productName =
         products?.find((p) => p.id === form.getValues("productId"))?.name ||
         "Producto";
@@ -197,12 +198,16 @@ export function AdjustStockForm() {
         ],
       }); // Para refrescar el stock actual mostrado
       form.reset();
+      console.log(typeof response);
       // setSelectedProductId(undefined); // form.reset() debería limpiar los campos del form
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message || "Error al ajustar stock.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar el producto"
+      );
+      console.error("Error al guardar el producto", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

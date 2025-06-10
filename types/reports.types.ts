@@ -262,3 +262,30 @@ export interface PaginatedStockValuationReport {
   totalPages: number;
   reportGrandTotals?: ReportStockValuationGrandTotals;
 }
+
+export interface FindInventoryReportParams {
+  page?: number;
+  limit?: number;
+  categoryId?: string;
+  supplierId?: string;
+  locationId?: string;
+  productId?: string;
+  technicianId?: string; // Para filtrar por técnico en reparaciones
+  customerId?: string; // Para filtrar por cliente en ventas o reparaciones
+  userId?: string; // Para filtrar por usuario que hizo el movimiento
+  salespersonId?: string; // Para filtrar por vendedor en ventas
+  referenceId?: string; // Para movimientos de inventario
+  referenceType?: string; // Para movimientos de inventario
+  startDate?: string; // Fecha de inicio del rango
+  endDate?: string; // Fecha de fin del rango
+  orderBy?: string;
+  sortBy?: string; // Para ordenamiento en valoración de inventario
+  sortOrder?: "asc" | "desc"; // Para ordenamiento en valoración de inventario
+  movementType?: string; // Para filtrar por tipo de movimiento
+  threshold?: ReportStockValuationThreshold; // Para filtrar por valoración de inventario
+  status?: string; // Para filtrar por estado de reparación
+  deviceModel?: string; // Para filtrar por modelo de dispositivo en reparaciones
+  deviceImei?: string; // Para filtrar por IMEI de dispositivo en reparaciones
+  deviceBrand?: string; // Para filtrar por marca de dispositivo en reparaciones
+  // Añade aquí cualquier otro filtro que uses, como 'sortBy', 'sortOrder', etc.
+}

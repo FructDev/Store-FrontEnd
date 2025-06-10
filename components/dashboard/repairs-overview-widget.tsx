@@ -94,7 +94,7 @@ export default function RepairsOverviewWidget({
   // Filtrar estados con conteo > 0 o mostrar todos si se prefiere
   const statusesToShow = overview?.byStatus
     ? Object.entries(overview.byStatus)
-        .filter(([status, count]) => count > 0) // Mostrar solo estados con reparaciones
+        .filter(([, count]) => count > 0) // Mostrar solo estados con reparaciones
         .sort(([, countA], [, countB]) => countB - countA) // Opcional: ordenar por conteo descendente
     : [];
 

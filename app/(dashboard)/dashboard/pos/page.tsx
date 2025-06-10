@@ -17,11 +17,10 @@ import {
   // PaginatedCustomersResponse, // No se usan directamente aquí
 } from "@/types/inventory.types"; // O tus archivos de tipos correspondientes
 import { DiscountType } from "@/types/prisma-enums";
-import {
-  POSCartLineItem, // Renombrado de SaleLineItemFormValues
-  //   POSPaymentItem, // Renombrado de PaymentFormValues
-  //   Sale, // Para el tipo de respuesta de createSaleMutation
-} from "@/types/sales.types"; // Asegúrate que estos tipos estén aquí
+import // POSCartLineItem, // Renombrado de SaleLineItemFormValues
+//   POSPaymentItem, // Renombrado de PaymentFormValues
+//   Sale, // Para el tipo de respuesta de createSaleMutation
+"@/types/sales.types"; // Asegúrate que estos tipos estén aquí
 import {
   PaymentMethod,
   InventoryItemStatus,
@@ -103,7 +102,7 @@ import {
   // Calculator, // No se usa
   ArrowLeftRight,
   PercentCircle,
-  TagIcon, // Para el botón Salir
+  // TagIcon, // Para el botón Salir
 } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { formatCurrency } from "@/lib/utils/formatters";
@@ -115,6 +114,7 @@ import { Customer } from "@/types/customer.types";
 import { NonSerializedProductToCartDialog } from "@/components/pos/non-serialized-product-to-cart-dialog";
 import { CreateCustomerDialog } from "@/components/customers/create-customer-quick-dialog"; // Ajusta la ruta
 import { Badge } from "@/components/ui/badge";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Schemas Zod
 const saleLineItemSchema = z.object({
@@ -457,6 +457,8 @@ export default function POSPage() {
           }; // Retornar la línea con su total actualizado
         });
 
+        console.log(linesWithRecalculatedTotals);
+
         // --- (2) APLICAR DESCUENTO GENERAL ---
         let actualGeneralDiscountAmount = 0;
         // 'discountAmount' en tu form es para el MONTO del descuento general.
@@ -623,7 +625,7 @@ export default function POSPage() {
         console.log("Total Pagado por Otros Métodos:", totalPaidByOtherMethods);
         console.log("Monto Original Pago Efectivo:", originalCashPaymentAmount);
 
-        let amountDueAfterOtherPayments = Math.max(
+        const amountDueAfterOtherPayments = Math.max(
           0,
           saleTotalAmount - totalPaidByOtherMethods
         );
@@ -944,8 +946,12 @@ export default function POSPage() {
       });
       router.push(`/dashboard/sales/${createdSale.id}`);
     },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Error al crear la venta.");
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
+      );
+      toast.error(errorMessage);
     },
   });
 

@@ -67,6 +67,7 @@ const formatDate = (
       typeof dateInput === "string" ? parseISO(dateInput) : dateInput;
     return format(date, formatString, { locale: es });
   } catch (e) {
+    console.log(e);
     return String(dateInput);
   }
 };
@@ -134,7 +135,7 @@ export default function SalesListPage() {
       dateRange?.to,
     ],
     queryFn: async () => {
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         limit: limitPerPage,
         sortBy: "saleDate",

@@ -9,7 +9,7 @@ import * as z from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
 import { CustomerBasic } from "@/types/customer.types"; // Asegúrate que CustomerBasic esté en customer.types
-import { RepairOrder } from "@/types/repairs.types";
+import { CreateRepairOrderPayload, RepairOrder } from "@/types/repairs.types";
 import { PageHeader } from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,6 +48,7 @@ import { Loader2, Save, X, ChevronsUpDown, Check } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // --- SCHEMAS ZOD Y TIPOS (COPIARLOS AQUÍ DESDE EL PASO 1 DE ARRIBA) ---
 // Schema Zod para la creación rápida de cliente (si se usa dentro de este form)
@@ -294,7 +295,7 @@ export default function CreateRepairOrderPage() {
     CreateRepairOrderFormValues // El DTO del backend es CreateRepairOrderDto
   >({
     mutationFn: async (formData) => {
-      const payload: any = {
+      const payload: CreateRepairOrderPayload = {
         // Construir el payload para CreateRepairOrderDto
         customerId: formData.isNewCustomer ? undefined : formData.customerId,
         newCustomer: formData.isNewCustomer ? formData.newCustomer : undefined,
@@ -325,17 +326,18 @@ export default function CreateRepairOrderPage() {
       queryClient.invalidateQueries({ queryKey: ["repairsList"] });
       router.push(`/dashboard/repairs/${createdRepairOrder.id}`); // Ir al detalle de la reparación
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Error al crear la Orden de Reparación.";
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
+      );
+      toast.error(errorMessage);
       toast.error(
-        Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg.toString()
+        Array.isArray(errorMessage)
+          ? errorMessage.join(", ")
+          : errorMessage.toString()
       );
-      console.error(
-        "Error en createRepairMutation:",
-        error.response?.data || error
-      );
+      console.error("Error en createRepairMutation:", errorMessage || error);
     },
   });
 

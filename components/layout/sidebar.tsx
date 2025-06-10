@@ -59,7 +59,7 @@ export function Sidebar() {
   // const isAdmin = user?.roles.includes('STORE_ADMIN'); // O tu lógica de roles
 
   // Filtrar navItems basados en roles/permisos si es necesario
-  const visibleNavItems = NAV_ITEMS.filter((item) => {
+  const visibleNavItems = NAV_ITEMS.filter(() => {
     // if (item.adminOnly && !isAdmin) return false; // Ejemplo simple de filtro por rol
     // if (item.permission && !userHasPermission(item.permission)) return false; // Lógica de permisos más granular
     return true; // Mostrar todos por ahora

@@ -39,6 +39,7 @@ import { PageHeader } from "@/components/common/page-header";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 // import { Prisma } from '@prisma/client'; // No deberías necesitar Prisma aquí en el frontend
 
 const ALL_PAYMENT_METHODS = Object.values(PaymentMethod);
@@ -274,11 +275,14 @@ export default function StoreSettingsPage() {
         setAuthStoreName(updatedData.name);
       }
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message ||
-        "Error al actualizar la configuración.";
-      toast.error(Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg);
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error actualizando configuración"
+      );
+      toast.error(
+        Array.isArray(errorMessage) ? errorMessage.join(", ") : errorMessage
+      );
     },
   });
 

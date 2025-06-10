@@ -21,7 +21,7 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
+  // FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,10 +30,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, CheckSquare } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react"; // React no siempre es necesario importar
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent } from "@/components/ui/card";
+// import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // --- COPIAR postRepairChecklistItems y completionDetailsSchema AQUÍ ---
 export const postRepairChecklistItems = [
@@ -88,7 +89,7 @@ interface CompletionDetailsDialogProps {
     // Datos actuales para poblar el formulario
     completionNotes?: string | null;
     warrantyPeriodDays?: number | null;
-    postRepairChecklist?: any | null; // Prisma.JsonValue
+    postRepairChecklist?: unknown | null; // Prisma.JsonValue
   };
   onSuccess: () => void;
 }
@@ -160,11 +161,16 @@ export function CompletionDetailsDialog({
       onSuccess();
       onOpenChange(false);
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message ||
-          "Error al guardar detalles de finalización."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al guardar los detalles de finalización"
       );
+      console.error(
+        "Error al guardar detalles de finalizacion",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 

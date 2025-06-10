@@ -14,8 +14,8 @@ import Link from "next/link";
 import {
   FileText,
   BarChart2,
-  Settings,
-  Users,
+  // Settings,
+  // Users,
   ShoppingCart,
   Wrench,
   History,

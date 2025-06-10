@@ -54,7 +54,10 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 import { formatCurrency } from "@/lib/utils/formatters";
 
-import { PaginatedSalesByProductReport } from "@/types/reports.types";
+import {
+  FindInventoryReportParams,
+  PaginatedSalesByProductReport,
+} from "@/types/reports.types";
 import { Category, Supplier, ProductBasic } from "@/types/inventory.types"; // Para los filtros
 import { SalesByProductOrderBy } from "@/types/prisma-enums"; // Ajusta la ruta al DTO del backend si lo necesitas para los valores del enum
 import { toast } from "sonner";
@@ -127,7 +130,7 @@ export default function SalesByProductReportPage() {
   // --- Query Principal para el Reporte ---
   const queryParams = useMemo(() => {
     if (!dateRange?.from || !dateRange?.to) return null;
-    const params: any = {
+    const params: FindInventoryReportParams = {
       startDate: format(dateRange.from, "yyyy-MM-dd"),
       endDate: format(dateRange.to, "yyyy-MM-dd"),
       page: currentPage,

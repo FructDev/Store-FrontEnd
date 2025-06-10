@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/common/page-header";
 import { DataTablePagination } from "@/components/common/data-table-pagination";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
 import {
-  StockCount,
+  // StockCount,
   PaginatedStockCountsResponse,
   InventoryLocationBasic,
 } from "@/types/inventory.types";
@@ -64,13 +64,14 @@ const formatDateForDisplay = (dateInput?: string | Date | null) => {
   try {
     return format(new Date(dateInput), "dd/MM/yyyy HH:mm", { locale: es });
   } catch (e) {
+    console.log(e);
     return String(dateInput);
   }
 };
 
 export default function StockCountsPage() {
   const router = useRouter();
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const [currentPage, setCurrentPage] = useState(1);
   const [limitPerPage] = useState(10);
 
@@ -124,7 +125,7 @@ export default function StockCountsPage() {
       dateRange?.to,
     ],
     queryFn: async () => {
-      const params: Record<string, any> = {
+      const params: Record<string, unknown> = {
         page: currentPage,
         limit: limitPerPage,
         sortBy: "initiatedAt",

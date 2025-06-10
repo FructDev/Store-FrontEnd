@@ -43,6 +43,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { CustomerFormDialog } from "@/components/customers/customer-form-dialog";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 export default function CustomersPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,7 +59,7 @@ export default function CustomersPage() {
   const [sorting, setSorting] = useState<SortingState>([]);
 
   // TODO: Añadir estado para diálogos de CUD
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  // const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [customerToDelete, setCustomerToDelete] = useState<Customer | null>(
     null
@@ -103,11 +104,12 @@ export default function CustomersPage() {
       queryClient.invalidateQueries({ queryKey: ["customersList"] });
       setCustomerToDelete(null); // Cerrar diálogo de confirmación
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message ||
-          "Error al actualizar el estado del cliente."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado del cliente."
       );
+      toast.error(errorMessage);
       setCustomerToDelete(null);
     },
   });

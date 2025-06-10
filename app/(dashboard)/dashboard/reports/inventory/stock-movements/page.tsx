@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -51,24 +51,25 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 
 import { format, startOfMonth, endOfMonth, parseISO } from "date-fns";
-import { es } from "date-fns/locale";
+// import { es } from "date-fns/locale";
 import {
   Filter,
-  Search,
+  // Search,
   XCircle,
   Download,
   ChevronsUpDown,
-  Check,
-  History,
+  // Check,
+  // History,
   SortAsc,
   SortDesc,
-  ArrowUpDown,
+  // ArrowUpDown,
 } from "lucide-react"; // Añadido SortAsc, SortDesc
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 
 import {
+  FindInventoryReportParams,
   PaginatedStockMovementsReport,
   ReportStockMovementItem,
 } from "@/types/reports.types";
@@ -164,7 +165,7 @@ export default function StockMovementsReportPage() {
 
   const queryParams = useMemo(() => {
     if (!dateRange?.from || !dateRange?.to) return null;
-    const params: any = {
+    const params: FindInventoryReportParams = {
       startDate: format(dateRange.from, "yyyy-MM-dd"),
       endDate: format(dateRange.to, "yyyy-MM-dd"),
       page: currentPage,

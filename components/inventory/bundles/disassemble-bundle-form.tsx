@@ -35,6 +35,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const disassembleBundleSchema = z.object({
   bundleProductId: z.string().min(1, "Debes seleccionar un producto bundle."),
@@ -162,10 +163,13 @@ export function DisassembleBundleForm() {
       });
       form.reset();
     },
-    onError: (error: any) => {
-      toast.error(
-        error.response?.data?.message || "Error al desensamblar el bundle."
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al desensamblar bundle"
       );
+      console.error("Error al desensamblar bundle", error || errorMessage);
+      toast.error(errorMessage);
     },
   });
 

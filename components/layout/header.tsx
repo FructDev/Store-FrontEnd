@@ -10,8 +10,8 @@ import {
   UserCircle2,
   LogOut,
   Building,
-  Settings, // Ejemplo si añades link de configuración
-  User, // Icono para Perfil
+  // Settings, // Ejemplo si añades link de configuración
+  // User, // Icono para Perfil
 } from "lucide-react";
 import {
   DropdownMenu,

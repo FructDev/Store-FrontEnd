@@ -9,8 +9,8 @@ import { toast } from "sonner";
 import apiClient from "@/lib/api";
 import {
   ProductBasic,
-  InventoryLocationBasic,
-  InventoryItem,
+  // InventoryLocationBasic,
+  // InventoryItem,
   ProductStockInfo,
 } from "@/types/inventory.types"; // O tus archivos de tipos
 import { InventoryItemStatus } from "@/types/prisma-enums";

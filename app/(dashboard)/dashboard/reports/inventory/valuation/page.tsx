@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
+  // CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input"; // Si necesitas un input de búsqueda general
+// import { Input } from "@/components/ui/input"; // Si necesitas un input de búsqueda general
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Popover,
@@ -52,20 +52,21 @@ import {
   XCircle,
   Download,
   ChevronsUpDown,
-  Check,
-  Layers3,
-  TrendingUp,
-  Archive,
+  // Check,
+  // Layers3,
+  // TrendingUp,
+  // Archive,
   SortAsc,
   SortDesc,
 } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { cn } from "@/lib/utils";
+// import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/utils/formatters"; // Asumiendo que tienes este
 
 import {
+  FindInventoryReportParams,
   PaginatedStockValuationReport,
-  ReportStockValuationItem,
+  // ReportStockValuationItem,
   ReportStockValuationThreshold,
   StockValuationSortBy,
 } from "@/types/reports.types";
@@ -88,14 +89,14 @@ const stockValuationThresholdLabels: Record<
   [ReportStockValuationThreshold.POSITIVE_STOCK_ONLY]:
     "Solo con Stock Positivo (>0)",
 };
-const ALL_THRESHOLDS = Object.values(ReportStockValuationThreshold);
+// const ALL_THRESHOLDS = Object.values(ReportStockValuationThreshold);
 
 const stockValuationSortByLabels: Record<StockValuationSortBy, string> = {
   [StockValuationSortBy.PRODUCT_NAME]: "Nombre Producto",
   [StockValuationSortBy.TOTAL_STOCK_VALUE]: "Valor Total Stock",
   [StockValuationSortBy.CURRENT_STOCK_QUANTITY]: "Cantidad Stock Actual",
 };
-const ALL_SORT_BY_OPTIONS = Object.values(StockValuationSortBy);
+// const ALL_SORT_BY_OPTIONS = Object.values(StockValuationSortBy);
 
 export default function StockValuationReportPage() {
   const [selectedLocationId, setSelectedLocationId] = useState<string>(
@@ -170,7 +171,7 @@ export default function StockValuationReportPage() {
 
   // --- Query Principal para el Reporte ---
   const queryParams = useMemo(() => {
-    const params: any = {
+    const params: FindInventoryReportParams = {
       page: currentPage,
       limit: limitPerPage,
       sortBy: orderBy,

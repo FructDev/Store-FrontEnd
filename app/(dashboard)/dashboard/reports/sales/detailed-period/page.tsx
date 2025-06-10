@@ -46,8 +46,9 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 
 import {
+  FindInventoryReportParams,
   PaginatedDetailedSalesReport,
-  ReportDetailedSaleItem,
+  // ReportDetailedSaleItem,
 } from "@/types/reports.types"; // Tus tipos frontend
 import { CustomerBasic } from "@/types/customer.types";
 import { UserMinimal } from "@/types/user.types";
@@ -57,14 +58,14 @@ import { saleStatusLabels } from "@/app/(dashboard)/dashboard/sales/page"; // Re
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
+import // FormControl,
+// FormField,
+// FormItem,
+// FormLabel,
+"@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 const ALL_SALE_STATUSES_ARRAY = Object.values(PrismaSaleStatus);
 const ALL_ITEMS_VALUE = "__ALL_ITEMS__"; // O cualquier string único no vacío
@@ -91,7 +92,7 @@ export default function DetailedSalesPeriodReportPage() {
   const debouncedProductSearch = useDebounce(productSearchTerm, 300);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [limitPerPage, setLimitPerPage] = useState(25);
+  const [limitPerPage] = useState(25);
 
   // Fetch para selectores de filtro
   const { data: customers, isLoading: isLoadingCustomers } = useQuery<
@@ -159,7 +160,7 @@ export default function DetailedSalesPeriodReportPage() {
         // Esto no debería pasar si los DatePicker siempre tienen valor
         throw new Error("Rango de fechas es requerido.");
       }
-      const params: any = {
+      const params: FindInventoryReportParams = {
         startDate: format(dateRange.from, "yyyy-MM-dd"),
         endDate: format(dateRange.to, "yyyy-MM-dd"),
         page: currentPage,
@@ -202,7 +203,7 @@ export default function DetailedSalesPeriodReportPage() {
       // o manejar esto antes de llamar a handleDownloadPDF
       return null;
     }
-    const params: any = {
+    const params: FindInventoryReportParams = {
       startDate: format(dateRange.from, "yyyy-MM-dd"),
       endDate: format(dateRange.to, "yyyy-MM-dd"),
       // page y limit no son usualmente necesarios para el PDF, ya que el backend debería generar el reporte completo.
@@ -261,8 +262,8 @@ export default function DetailedSalesPeriodReportPage() {
       const link = document.createElement("a");
       link.href = window.URL.createObjectURL(blob);
 
-      const startDate = queryParams.startDate || "reporte";
-      const endDate = queryParams.endDate || "ventas";
+      // const startDate = queryParams.startDate || "reporte";
+      // const endDate = queryParams.endDate || "ventas";
       link.download = `reporte-ventas-<span class="math-inline">\{startDate\}\-al\-</span>{endDate}.pdf`;
 
       document.body.appendChild(link);
@@ -271,26 +272,17 @@ export default function DetailedSalesPeriodReportPage() {
       window.URL.revokeObjectURL(link.href); // Limpiar el object URL
 
       toast.success("PDF descargado exitosamente.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error descargando PDF:", err);
-      let errorMessage = "Error al generar el PDF del reporte.";
-      if (err.response?.data) {
-        // Si la respuesta es un blob y hubo un error, puede que necesitemos leer el blob como texto
-        if (
-          err.response.data instanceof Blob &&
-          err.response.data.type === "application/json"
-        ) {
-          try {
-            const errorJson = JSON.parse(await err.response.data.text());
-            errorMessage = errorJson.message || errorMessage;
-          } catch (e) {
-            // No hacer nada si no se puede parsear
-          }
-        } else if (err.response.data.message) {
-          errorMessage = err.response.data.message;
-        }
-      }
+
+      // 2. El bloque catch ahora es async para usar await
+      const errorMessage = await getErrorMessage(
+        err,
+        "Error al generar el PDF."
+      );
       toast.error(errorMessage);
+
+      // Tu lógica de limpieza específica de este componente
     }
   };
 

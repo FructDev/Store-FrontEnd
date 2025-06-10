@@ -97,7 +97,7 @@ export default function PurchaseOrderDetailPage() {
       const poDataFromApi = response.data;
 
       const safeParseFloat = (
-        val: any,
+        val: unknown,
         defaultValueIfNaN: number | null = 0
       ): number | null => {
         if (val === null || val === undefined || String(val).trim() === "")
@@ -106,7 +106,7 @@ export default function PurchaseOrderDetailPage() {
         return isNaN(num) ? defaultValueIfNaN : num;
       };
       const safeParseInt = (
-        val: any,
+        val: unknown,
         defaultValueIfNaN: number = 0
       ): number => {
         if (val === null || val === undefined || String(val).trim() === "")

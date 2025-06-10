@@ -37,6 +37,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import React, { useEffect } from "react"; // React no siempre es necesario importar
+import { getErrorMessage } from "@/lib/utils/get-error-message";
 
 // Mapeo para estados de Reparación (importar de un archivo de constantes/utils o definir aquí)
 const repairStatusLabels: Record<PrismaRepairStatus, string> = {
@@ -123,12 +124,16 @@ export function UpdateStatusDialog({
       onSuccess(); // Llama al callback para refrescar datos en la página padre
       onOpenChange(false); // Cierra este diálogo
     },
-    onError: (error: any) => {
-      const errorMsg =
-        error.response?.data?.message || "Error al actualizar el estado.";
-      toast.error(
-        Array.isArray(errorMsg) ? errorMsg.join(", ") : errorMsg.toString()
+    onError: (error: unknown) => {
+      const errorMessage = getErrorMessage(
+        error,
+        "Error al actualizar el estado de la reparación"
       );
+      console.error(
+        "Error al actualizar el estado de la reparacion",
+        error || errorMessage
+      );
+      toast.error(errorMessage);
     },
   });
 
