@@ -148,9 +148,6 @@ export function CreateStockCountDialog({
     mutation.mutate(data);
   }
 
-  const commit = "Try to commit the changes";
-  console.log(commit);
-
   return (
     <Dialog
       open={isOpen}
