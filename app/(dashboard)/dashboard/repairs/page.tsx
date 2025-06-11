@@ -49,7 +49,7 @@ import { cn } from "@/lib/utils";
 // No necesitamos FormLabel aquí si usamos <p> o <label> HTML para el DatePicker
 
 // Mapeo para estados de Reparación
-export const repairStatusLabels: Record<PrismaRepairStatus, string> = {
+const repairStatusLabels: Record<PrismaRepairStatus, string> = {
   [PrismaRepairStatus.RECEIVED]: "Recibido",
   [PrismaRepairStatus.DIAGNOSING]: "Diagnosticando",
   [PrismaRepairStatus.QUOTE_PENDING]: "Pend. Cotización",
