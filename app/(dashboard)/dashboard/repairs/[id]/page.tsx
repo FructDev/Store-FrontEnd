@@ -76,7 +76,7 @@ import { getErrorMessage } from "@/lib/utils/get-error-message";
 // No importamos los diálogos aún, solo sus placeholders de acción
 
 // Mapeo para estados de Reparación
-export const repairStatusLabels: Record<PrismaRepairStatus, string> = {
+const repairStatusLabels: Record<PrismaRepairStatus, string> = {
   RECEIVED: "Recibido",
   DIAGNOSING: "Diagnosticando",
   QUOTE_PENDING: "Pend. Cotización",
