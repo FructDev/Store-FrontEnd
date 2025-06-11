@@ -48,7 +48,7 @@ import { Eye, Filter, XCircle, ShoppingCart } from "lucide-react"; // Iconos
 // import { FormLabel } from "@/components/ui/form";
 
 // Mapeo para estados de Venta
-export const saleStatusLabels: Record<PrismaSaleStatus, string> = {
+const saleStatusLabels: Record<PrismaSaleStatus, string> = {
   PENDING_PAYMENT: "Pendiente Pago",
   COMPLETED: "Completada",
   CANCELLED: "Cancelada",
