@@ -487,3 +487,13 @@ export interface ProductApiPayload {
   attributes: Record<string, string> | null;
   bundleComponentsData?: { componentId: string; quantity: number }[];
 }
+
+export interface CreateStockCountPayload {
+  notes?: string | null;
+  locationId?: string | null; // Es opcional en el objeto general
+  lines?: {
+    // Asumimos que para un conteo ad-hoc, las líneas podrían tener esta forma
+    productId: string;
+    countedQuantity: number;
+  }[];
+}

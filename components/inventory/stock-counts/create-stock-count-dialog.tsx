@@ -7,7 +7,11 @@ import * as z from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
-import { InventoryLocationBasic, StockCount } from "@/types/inventory.types"; // O types/stock-counts.types
+import {
+  CreateStockCountPayload,
+  InventoryLocationBasic,
+  StockCount,
+} from "@/types/inventory.types"; // O types/stock-counts.types
 // import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -96,7 +100,7 @@ export function CreateStockCountDialog({
 
   const mutation = useMutation<StockCount, Error, CreateStockCountFormValues>({
     mutationFn: async (data: CreateStockCountFormValues) => {
-      const payload: any = { notes: data.notes };
+      const payload: CreateStockCountPayload = { notes: data.notes };
       if (data.countType === "location_full" && data.locationId) {
         payload.locationId = data.locationId;
         // El backend pre-poblará las líneas si locationId se envía y no se envía un array `lines`
