@@ -54,6 +54,7 @@ const repairStatusLabels: Record<PrismaRepairStatus, string> = {
   [PrismaRepairStatus.DIAGNOSING]: "Diagnosticando",
   [PrismaRepairStatus.QUOTE_PENDING]: "Pend. Cotización",
   [PrismaRepairStatus.AWAITING_QUOTE_APPROVAL]: "Esperando Aprob. Cotización",
+  [PrismaRepairStatus.QUOTE_APPROVED]: "Cotización Aprobada",
   [PrismaRepairStatus.QUOTE_REJECTED]: "Cotización Rechazada",
   [PrismaRepairStatus.AWAITING_PARTS]: "Esperando Repuestos",
   [PrismaRepairStatus.IN_REPAIR]: "En Reparación",

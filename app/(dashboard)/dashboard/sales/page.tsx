@@ -7,7 +7,7 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
 import {
-  Sale,
+  EnrichedSaleDetailed as Sale,
   PaginatedSalesResponse,
   CustomerBasic,
 } from "@/types/sales.types"; // CustomerBasic de sales.types o customer.types
