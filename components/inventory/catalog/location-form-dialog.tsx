@@ -59,7 +59,7 @@ export function LocationFormDialog({
   const queryClient = useQueryClient();
   const isEditMode = !!location?.id;
 
-  const form = useForm<LocationFormValues>({
+  const form = useForm({
     resolver: zodResolver(locationFormSchema),
     defaultValues: {
       name: "",

@@ -240,7 +240,7 @@ export function EditPODialog({
                     <DatePicker
                       selected={field.value}
                       onSelect={field.onChange}
-                      placeholderText="Fecha de Orden"
+                      placeholder="Fecha de Orden"
                     />
                     <FormMessage />
                   </FormItem>
@@ -255,7 +255,7 @@ export function EditPODialog({
                     <DatePicker
                       selected={field.value}
                       onSelect={field.onChange}
-                      placeholderText="Fecha Esperada"
+                      placeholder="Fecha Esperada"
                     />
                     <FormMessage />
                   </FormItem>

@@ -27,7 +27,7 @@ import {
   Cell,
 } from "recharts";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/stores/auth.store";
+import { useStoreSettings } from "@/hooks/use-store-settings";
 
 interface SalesBySalespersonChartProps {
   dateRange: { startDate?: string; endDate?: string };
@@ -53,9 +53,9 @@ export default function SalesBySalespersonChart({
   const [limit] = useState(7); // Mostrar Top 7 vendedores
   const [orderBy, setOrderBy] =
     useState<SalesOrderByCriteria>("totalSalesAmount"); // Default a monto
+  const { data: storeSettings } = useStoreSettings();
 
-  const currencySymbol =
-    useAuthStore((state) => state.user?.store?.currencySymbol) || "RD$";
+  const currencySymbol = storeSettings?.currencySymbol || "RD$";
 
   const {
     data: salesBySalesperson,
@@ -118,11 +118,10 @@ export default function SalesBySalespersonChart({
     // No es necesario .reverse() para BarChart vertical si el eje X es la categoría
   }, [salesBySalesperson, orderBy]);
 
-  const xAxisTickFormatter = (value: never) => {
-    return orderBy === "totalSalesAmount"
-      ? formatCurrency(value, "", 0)
-      : value;
-  };
+  const yAxisTickFormatter = (value: number | string) =>
+    orderBy === "totalSalesAmount"
+      ? formatCurrency(Number(value), currencySymbol) // RD$ 1 234.00
+      : String(value);
 
   if (isError) {
     /* ... tu manejo de error ... */
@@ -177,7 +176,7 @@ export default function SalesBySalespersonChart({
               />
               <YAxis
                 style={{ fontSize: "0.65rem", fill: "hsl(var(--foreground))" }}
-                tickFormatter={xAxisTickFormatter} // Usar el formatter del eje X del gráfico de productos
+                tickFormatter={yAxisTickFormatter}
               />
               <Tooltip
                 cursor={{ fill: "hsl(var(--muted))", opacity: 0.5 }}
@@ -188,22 +187,20 @@ export default function SalesBySalespersonChart({
                   fontSize: "0.75rem",
                   padding: "4px 8px",
                 }}
-                formatter={(value: number, nameKey: string, props) => {
-                  const { payload } = props;
-                  console.log(typeof payload);
+                formatter={(value: number | string) => {
                   const label =
                     orderBy === "totalSalesAmount"
                       ? "Monto Total:"
                       : "Nº Ventas:";
-                  const displayValue =
+                  const display =
                     orderBy === "totalSalesAmount"
-                      ? formatCurrency(value, currencySymbol)
-                      : `${value}`;
-                  return [displayValue, label];
+                      ? formatCurrency(Number(value), currencySymbol)
+                      : String(value);
+                  return [display, label]; // [valor formateado, texto de etiqueta]
                 }}
-                labelFormatter={(label, payload) =>
-                  payload?.[0]?.payload.fullSalespersonName || label
-                } // Mostrar nombre completo en tooltip
+                labelFormatter={(_, payload) =>
+                  payload?.[0]?.payload.fullSalespersonName ?? ""
+                }
               />
               <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={20}>
                 {chartData.map((entry, index) => (

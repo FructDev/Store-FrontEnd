@@ -28,6 +28,10 @@ interface AuthState {
   setUser: (userData: User | null) => void;
   setToken: (token: string | null) => void; // Útil para inicializar desde localStorage
   setStoreName: (name: string) => void;
+  tempSelectedProductForTransfer: { tracksImei: boolean } | null;
+  setTempSelectedProductForTransfer: (
+    product: { tracksImei: boolean } | null
+  ) => void;
   // Podríamos añadir un estado de 'loading' si la verificación inicial es asíncrona
 }
 
@@ -57,6 +61,9 @@ export const useAuthStore = create<AuthState>()(
         set((state) => ({
           user: state.user ? { ...state.user, storeName: name } : null,
         })),
+      tempSelectedProductForTransfer: null,
+      setTempSelectedProductForTransfer: (product) =>
+        set({ tempSelectedProductForTransfer: product }),
     }),
     {
       name: "saashopix-auth-storage", // Nombre para el item en localStorage

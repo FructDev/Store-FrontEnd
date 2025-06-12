@@ -162,7 +162,7 @@ export function ReceiveStockDialog({
     [isSerializedProduct, pendingQuantity]
   );
 
-  const form = useForm<ReceiveStockFormValues>({
+  const form = useForm({
     resolver: zodResolver(currentSchema), // currentSchema se genera con useMemo
     defaultValues: {
       locationId: undefined,

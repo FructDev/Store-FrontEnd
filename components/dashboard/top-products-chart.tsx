@@ -27,7 +27,8 @@ import {
   Cell,
 } from "recharts";
 import { cn } from "@/lib/utils";
-import { useAuthStore } from "@/stores/auth.store"; // Para obtener currencySymbol
+// import { useAuthStore } from "@/stores/auth.store"; // Para obtener currencySymbol
+import { useStoreSettings } from "@/hooks/use-store-settings";
 
 interface TopProductsChartProps {
   dateRange: { startDate?: string; endDate?: string };
@@ -54,8 +55,9 @@ export default function TopProductsChart({
   const [limit] = useState(7); // Mostrar Top 7 en el gráfico para no saturar
   const [orderBy, setOrderBy] = useState<OrderByCriteriaChart>("quantity");
 
-  const currencySymbol =
-    useAuthStore((state) => state.user?.store?.currencySymbol) || "RD$";
+  const { data: storeSettings } = useStoreSettings();
+
+  const currencySymbol = storeSettings?.currencySymbol || "RD$";
 
   const {
     data: topProducts,
@@ -104,9 +106,10 @@ export default function TopProductsChart({
       .reverse(); // Invertir para que el más alto esté arriba en el gráfico horizontal
   }, [topProducts, orderBy]);
 
-  const xAxisTickFormatter = (value: never) => {
-    return orderBy === "revenue" ? formatCurrency(value, "", 0) : value; // Formato corto para eje
-  };
+  const xAxisTickFormatter = (value: number | string) =>
+    orderBy === "revenue"
+      ? formatCurrency(Number(value), currencySymbol) // RD$ 1 234.00
+      : String(value);
 
   if (isError) {
     return (

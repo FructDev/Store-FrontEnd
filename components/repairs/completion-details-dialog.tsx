@@ -60,7 +60,7 @@ export const postRepairChecklistItems = [
 const checklistSchemaObject = postRepairChecklistItems.reduce((acc, item) => {
   acc[item.id] = z.boolean().default(false);
   return acc;
-}, {} as Record<string, z.ZodBoolean>);
+}, {} as Record<string, z.ZodTypeAny>);
 
 const completionDetailsSchema = z.object({
   completionNotes: z
@@ -272,8 +272,12 @@ export function CompletionDetailsDialog({
                   ))}
                 </Card>
                 <FormMessage>
-                  {form.formState.errors.postRepairChecklist?.message ||
-                    form.formState.errors.postRepairChecklist?.root?.message}
+                  {String(
+                    form.formState.errors.postRepairChecklist?.message ??
+                      form.formState.errors.postRepairChecklist?.root
+                        ?.message ??
+                      ""
+                  )}
                 </FormMessage>
               </div>
             </div>

@@ -19,6 +19,7 @@ const paymentMethodLabels: Record<PrismaPaymentMethod, string> = {
   STORE_CREDIT: "Crédito Tienda",
   OTHER: "Otro",
 };
+import Image from "next/image";
 
 // El tipo para los tamaños de papel sigue siendo útil para controlar los estilos de la previsualización
 export type ReceiptPaperSize =
@@ -80,10 +81,12 @@ export function PrintableSaleReceipt({
       {/* 1. Encabezado de la Tienda */}
       <header className="text-center mb-2">
         {storeSettings?.logoUrl && (
-          <img
+          <Image
             src={storeSettings.logoUrl}
             alt="Logo Tienda"
-            className="h-12 max-w-[150px] mx-auto mb-1"
+            width={150}
+            height={48}
+            className="h-12 max-w-[150px] mx-auto mb-1 object-contain"
           />
         )}
         <h2 className="font-bold text-sm uppercase">
@@ -115,7 +118,9 @@ export function PrintableSaleReceipt({
         {sale.user && (
           <div className="flex justify-between">
             <span>Cajero/a:</span>
-            <span>{sale.salespersonName || "N/A"}</span>
+            <span>
+              {sale.user.firstName || "N/A"} {sale.user.lastName}
+            </span>
           </div>
         )}
       </section>
@@ -126,7 +131,9 @@ export function PrintableSaleReceipt({
           <Separator className="my-2 border-dashed border-black" />
           <section className="text-[10pt] text-left">
             <div className="font-semibold">Cliente:</div>
-            <div>{sale.customerName}</div>
+            <div>
+              {sale.customer.firstName} {sale.customer.lastName}
+            </div>
             {(sale.customer as EnrichedSaleDetailed).rnc && (
               <div>RNC/ID: {(sale.customer as EnrichedSaleDetailed).rnc}</div>
             )}
@@ -170,7 +177,7 @@ export function PrintableSaleReceipt({
                 {formatCurrency(line.unitPrice, currency)}
               </td>
               <td className="text-right py-1 pl-1">
-                {formatCurrency(line.lineTotalAfterTax)}
+                {formatCurrency(line.lineTotal)}
               </td>
             </tr>
           ))}
@@ -194,7 +201,7 @@ export function PrintableSaleReceipt({
           </div>
         )}
         <div className="flex justify-between">
-          <span>IMPUESTOS ({(taxRate * 100).toFixed(0)}%):</span>
+          <span>IMPUESTOS ({(Number(taxRate) * 100).toFixed(0)}%):</span>
           <span>{formatCurrency(sale.taxTotal, currency)}</span>
         </div>
         <div className="flex justify-between font-bold text-base mt-1">

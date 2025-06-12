@@ -9,8 +9,11 @@ import { toast } from "sonner";
 import apiClient from "@/lib/api";
 import { RepairOrder } from "@/types/repairs.types"; // Asume que Sale está en repairs.types o importarlo de sales.types
 import { SaleFromAPI as Sale } from "@/types/sales.types";
-import { PaymentMethod as PrismaPaymentMethod } from "@/types/prisma-enums";
-import { useAuthStore } from "@/stores/auth.store";
+import {
+  PaymentMethod,
+  PaymentMethod as PrismaPaymentMethod,
+} from "@/types/prisma-enums";
+// import { useAuthStore } from "@/stores/auth.store";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -44,6 +47,7 @@ import { formatCurrency } from "@/lib/utils/formatters";
 import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { getErrorMessage } from "@/lib/utils/get-error-message";
+import { useStoreSettings } from "@/hooks/use-store-settings";
 
 const paymentMethodLabels: Record<PrismaPaymentMethod, string> = {
   CASH: "Efectivo",
@@ -126,7 +130,8 @@ export function FactureRepairDialog({
   repairOrderData,
   onSuccess,
 }: FactureRepairDialogProps) {
-  const storeInfo = useAuthStore((state) => state.user?.store);
+  const { data: storeInfo } = useStoreSettings();
+  // const storeInfo = useAuthStore((state) => state.user?.store);
   const storeAcceptedPaymentMethods =
     storeInfo?.acceptedPaymentMethods || ALL_PAYMENT_METHODS;
 
@@ -359,12 +364,14 @@ export function FactureRepairDialog({
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {storeAcceptedPaymentMethods.map((m) => (
-                                  <SelectItem key={m} value={m}>
-                                    {paymentMethodLabels[m] ||
-                                      m.replace("_", " ")}
-                                  </SelectItem>
-                                ))}
+                                {storeAcceptedPaymentMethods.map(
+                                  (m: PaymentMethod) => (
+                                    <SelectItem key={m} value={m}>
+                                      {paymentMethodLabels[m] ??
+                                        m.replace("_", " ")}
+                                    </SelectItem>
+                                  )
+                                )}
                               </SelectContent>
                             </Select>
                             <FormMessage className="text-xs" />

@@ -44,7 +44,8 @@ const disassembleBundleSchema = z.object({
     .min(
       1,
       "Debes seleccionar el lote/item específico del bundle a desensamblar."
-    ),
+    )
+    .nullable(),
   quantityToDisassemble: z.coerce
     .number()
     .positive("Cantidad debe ser positiva."),
@@ -199,7 +200,7 @@ export function DisassembleBundleForm() {
               <Select
                 onValueChange={(value) => {
                   field.onChange(value);
-                  form.setValue("bundleInventoryItemId", undefined);
+                  form.setValue("bundleInventoryItemId", null);
                 }}
                 value={field.value || ""}
                 disabled={isLoadingBundleProducts}

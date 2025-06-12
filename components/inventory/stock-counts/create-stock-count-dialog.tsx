@@ -77,7 +77,7 @@ export function CreateStockCountDialog({
   const queryClient = useQueryClient();
   // const router = useRouter(); // Para redirigir
 
-  const form = useForm<CreateStockCountFormValues>({
+  const form = useForm({
     resolver: zodResolver(createStockCountSchema),
     defaultValues: {
       locationId: undefined,

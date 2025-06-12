@@ -14,7 +14,7 @@ import {
 } from "@/types/sales.types";
 import { PaymentMethod as PrismaPaymentMethod } from "@/types/prisma-enums";
 import { formatCurrency } from "@/lib/utils/formatters";
-import { useAuthStore } from "@/stores/auth.store"; // Para métodos de pago aceptados por la tienda
+// import { useAuthStore } from "@/stores/auth.store"; // Para métodos de pago aceptados por la tienda
 
 import { Button } from "@/components/ui/button";
 import {
@@ -63,6 +63,7 @@ import { cn } from "@/lib/utils";
 import { format as formatDateFn } from "date-fns"; // Para formatear la fecha de devolución
 import { es } from "date-fns/locale";
 import { getErrorMessage } from "@/lib/utils/get-error-message";
+import { useStoreSettings } from "@/hooks/use-store-settings";
 
 const paymentMethodLabels: Record<PrismaPaymentMethod, string> = {
   [PrismaPaymentMethod.CASH]: "Efectivo",
@@ -217,9 +218,12 @@ export function ProcessSaleReturnDialog({
   onReturnProcessed,
 }: ProcessSaleReturnDialogProps) {
   // const queryClient = useQueryClient();
-  const storeInfo = useAuthStore((state) => state.user?.store);
+  const { data: storeSettings } = useStoreSettings();
   const storeAcceptedPaymentMethods =
-    storeInfo?.acceptedPaymentMethods || ALL_PAYMENT_METHODS;
+    storeSettings?.acceptedPaymentMethods &&
+    storeSettings.acceptedPaymentMethods.length > 0
+      ? storeSettings.acceptedPaymentMethods
+      : ALL_PAYMENT_METHODS;
 
   const form = useForm({
     resolver: zodResolver(processReturnFormSchema),
@@ -283,7 +287,7 @@ export function ProcessSaleReturnDialog({
             unitPrice: saleLine.unitPrice, // Ya es número en EnrichedSaleLineItem
             isSelected: false,
             returnQuantity: 0,
-            restockLocationId: storeInfo?.defaultReturnLocationId || "", // Usar default de tienda si existe
+            restockLocationId: storeSettings?.defaultReturnLocationId || "", // Usar default de tienda si existe
             returnedCondition: "Vendible",
             reason: null,
           };
@@ -322,7 +326,7 @@ export function ProcessSaleReturnDialog({
         ],
       });
     }
-  }, [sale, isOpen, form, storeInfo?.defaultReturnLocationId]);
+  }, [sale, isOpen, form, storeSettings?.defaultReturnLocationId]);
 
   const watchedReturnLines = form.watch("lines");
   const calculatedRefundAmount = useMemo(() => {
@@ -331,13 +335,12 @@ export function ProcessSaleReturnDialog({
       watchedReturnLines
     );
     return (watchedReturnLines || []).reduce((acc, line) => {
-      if (line.isSelected && line.returnQuantity > 0) {
-        // Asegurarse que line.unitPrice sea un número aquí
-        const unitPrice = Number(line.unitPrice) || 0;
-        const returnQty = Number(line.returnQuantity) || 0;
-        return acc + returnQty * unitPrice;
-      }
-      return acc;
+      if (!line.isSelected) return acc; // no seleccionado → no suma
+
+      const unitPrice = Number(line.unitPrice) || 0;
+      const returnQty = Number(line.returnQuantity ?? 0); // ⬅️ nunca undefined
+
+      return returnQty > 0 ? acc + returnQty * unitPrice : acc;
     }, 0);
   }, [watchedReturnLines]);
 

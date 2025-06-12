@@ -7,9 +7,13 @@ import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
-import { PaymentMethod as PrismaPaymentMethod } from "@/types/prisma-enums";
-import { useAuthStore } from "@/stores/auth.store"; // Para métodos de pago aceptados
+import {
+  PaymentMethod,
+  PaymentMethod as PrismaPaymentMethod,
+} from "@/types/prisma-enums";
+// import { useAuthStore } from "@/stores/auth.store"; // Para métodos de pago aceptados
 import { Button } from "@/components/ui/button";
+import { useStoreSettings } from "@/hooks/use-store-settings";
 import {
   Dialog,
   DialogContent,
@@ -101,9 +105,12 @@ export function AddSalePaymentDialog({
   onOpenChange,
   onPaymentAdded,
 }: AddSalePaymentDialogProps) {
+  const { data: storeSettings } = useStoreSettings();
   const storeAcceptedPaymentMethods =
-    useAuthStore((state) => state.user?.store?.acceptedPaymentMethods) ||
-    ALL_PAYMENT_METHODS;
+    storeSettings?.acceptedPaymentMethods &&
+    storeSettings.acceptedPaymentMethods.length > 0
+      ? storeSettings.acceptedPaymentMethods
+      : ALL_PAYMENT_METHODS;
 
   const currentSchema = React.useMemo(
     () => createAddPaymentSchema(amountDue),
@@ -212,9 +219,9 @@ export function AddSalePaymentDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {storeAcceptedPaymentMethods.map((m) => (
+                      {storeAcceptedPaymentMethods.map((m: PaymentMethod) => (
                         <SelectItem key={m} value={m}>
-                          {paymentMethodLabels[m] || m.replace("_", " ")}
+                          {paymentMethodLabels[m] ?? m.replace("_", " ")}
                         </SelectItem>
                       ))}
                     </SelectContent>

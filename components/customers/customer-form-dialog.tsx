@@ -80,7 +80,7 @@ export function CustomerFormDialog({
   // const queryClient = useQueryClient();
   const isEditMode = !!customerData;
 
-  const form = useForm<CustomerFormValues>({
+  const form = useForm({
     resolver: zodResolver(customerFormSchema),
     defaultValues: {
       firstName: "",

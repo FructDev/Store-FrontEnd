@@ -6,7 +6,6 @@ import {
   StockCountStatus as PrismaStockCountStatus,
   SaleStatus as PrismaSaleStatus,
   PaymentMethod as PrismaPaymentMethod,
-  ProductType,
 } from "@/types/prisma-enums"; // Para usar enums
 import { CustomerBasic } from "./customer.types";
 import { UserMinimal } from "./user.types";
@@ -470,10 +469,10 @@ export interface SaleReturn {
 export interface ProductApiPayload {
   // Campos de texto y booleanos
   name: string;
-  productType: ProductType;
+  productType: PrismaProductType;
   tracksImei: boolean;
   isActive: boolean;
-  categoryId: string;
+  categoryId?: string | null;
   sku?: string | null;
   supplierId?: string | null;
 
@@ -487,7 +486,7 @@ export interface ProductApiPayload {
 
   // Campos de objeto y array
   attributes: Record<string, string> | null;
-  bundleComponentsData?: { componentId: string; quantity: number }[];
+  bundleComponentsData?: { componentProductId: string; quantity: number }[];
 }
 
 export interface CreateStockCountPayload {

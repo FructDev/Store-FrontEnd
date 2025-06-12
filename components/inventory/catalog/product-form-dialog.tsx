@@ -155,6 +155,14 @@ const productFormSchema = z.object({
     )
     .optional()
     .default([]),
+  attributes: z
+    .record(
+      // Este campo es para compatibilidad con el backend
+      z.string(), // Claves de atributos
+      z.union([z.string(), z.number(), z.boolean()]) // Valores pueden ser string, number o boolean
+    )
+    .optional()
+    .nullable(),
 });
 
 type ProductFormValues = z.infer<typeof productFormSchema>;
@@ -175,7 +183,7 @@ export function ProductFormDialog({
   const queryClient = useQueryClient();
   const isEditMode = !!product?.id;
 
-  const form = useForm<ProductFormValues>({
+  const form = useForm({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
       // Estos se sobrescribirán por el useEffect al abrir/cambiar producto
@@ -387,7 +395,6 @@ export function ProductFormDialog({
         ...restOfFormData,
         attributes:
           Object.keys(attributesObject).length > 0 ? attributesObject : null,
-        // Los campos como sellingPrice ya vienen como 'number' o 'null' desde el formulario.
       };
 
       // 4. Tu lógica de bundles se mantiene

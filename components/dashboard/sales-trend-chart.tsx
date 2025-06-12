@@ -113,7 +113,7 @@ export default function SalesTrendChart({
                   style: { fontSize: "0.7rem", fill: "#8884d8" },
                 }}
                 style={{ fontSize: "0.7rem" }}
-                tickFormatter={(value) => formatCurrency(value, "", 0)}
+                tickFormatter={(value) => formatCurrency(value, "", "0")}
               />
               <YAxis
                 yAxisId="right"

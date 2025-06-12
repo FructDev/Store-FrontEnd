@@ -139,6 +139,7 @@ export interface EnrichedSaleLineItem
   discountAmount: number;
   taxAmount: number;
   lineTotal: number;
+  quantityReturnedByPreviousReturns?: number; // Si lo tienes
   // Aquí podrías añadir 'pendingReturnQuantity' si lo calculas para devoluciones
 }
 
