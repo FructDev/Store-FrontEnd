@@ -29,6 +29,12 @@ import { PurchaseOrderStatus as PrismaPurchaseOrderStatus } from "@/types/prisma
 import { toast } from "sonner"; // Asumo que usas sonner para notificaciones
 import { useMemo, useState } from "react";
 import { ReceiveStockDialog } from "@/components/inventory/purchase-orders/receive-stock-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const poStatusLabels: Record<PrismaPurchaseOrderStatus, string> = {
   DRAFT: "Borrador",
@@ -412,10 +418,20 @@ export default function PurchaseOrderDetailPage() {
                         </Button>
                       )}
                       {pendingQuantity === 0 && (
-                        <CheckCircle
-                          className="h-5 w-5 text-green-500 mx-auto"
-                          title="Completamente Recibido"
-                        />
+                        // 2. Envuelve todo en un TooltipProvider
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              {/* El <span> ayuda a posicionar el tooltip correctamente sobre el ícono */}
+                              <span className="flex justify-center">
+                                <CheckCircle className="h-5 w-5 text-green-500" />
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Completamente Recibido</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       )}
                     </TableCell>
                   </TableRow>
