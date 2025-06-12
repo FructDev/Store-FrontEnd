@@ -237,7 +237,7 @@ export default function CreateRepairOrderPage() {
     { id: "has_sd", label: "Tiene Tarjeta SD" },
   ];
 
-  const form = useForm<CreateRepairOrderFormValues>({
+  const form = useForm({
     resolver: zodResolver(createRepairOrderFormSchema),
     defaultValues: {
       customerId: null,
@@ -503,7 +503,11 @@ export default function CreateRepairOrderPage() {
                         <FormItem>
                           <FormLabel>Nombre*</FormLabel>
                           <FormControl>
-                            <Input placeholder="Juan" {...field} />
+                            <Input
+                              placeholder="Juan"
+                              {...field}
+                              value={field.value ?? ""}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -516,7 +520,11 @@ export default function CreateRepairOrderPage() {
                         <FormItem>
                           <FormLabel>Apellido*</FormLabel>
                           <FormControl>
-                            <Input placeholder="Pérez" {...field} />
+                            <Input
+                              placeholder="Pérez"
+                              {...field}
+                              value={field.value ?? ""}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
