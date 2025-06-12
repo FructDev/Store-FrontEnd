@@ -674,7 +674,8 @@ export default function StockValuationReportPage() {
             totalPages={reportData.totalPages}
             totalRecords={reportData.total}
             limit={reportData.limit}
-            onPageChange={(newPage) => setCurrentPage(newPage)}
+            onNextPage={() => setCurrentPage(reportData.page + 1)}
+            onPreviousPage={() => setCurrentPage(reportData.page - 1)}
             isFetching={isFetchingReport}
           />
         </div>

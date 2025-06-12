@@ -8,7 +8,10 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import apiClient from "@/lib/api";
 import { InventoryLocationBasic } from "@/types/inventory.types"; // Ajusta si EnrichedSaleLineItem está en sales.types
-import { EnrichedSale, EnrichedSaleLineItem } from "@/types/sales.types";
+import {
+  EnrichedSaleDetailed,
+  EnrichedSaleLineItem,
+} from "@/types/sales.types";
 import { PaymentMethod as PrismaPaymentMethod } from "@/types/prisma-enums";
 import { formatCurrency } from "@/lib/utils/formatters";
 import { useAuthStore } from "@/stores/auth.store"; // Para métodos de pago aceptados por la tienda
@@ -201,7 +204,7 @@ interface CreateSaleReturnApiPayload {
 }
 
 interface ProcessSaleReturnDialogProps {
-  sale: EnrichedSale | null;
+  sale: EnrichedSaleDetailed | null;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onReturnProcessed: () => void;
@@ -218,7 +221,7 @@ export function ProcessSaleReturnDialog({
   const storeAcceptedPaymentMethods =
     storeInfo?.acceptedPaymentMethods || ALL_PAYMENT_METHODS;
 
-  const form = useForm<ProcessReturnFormValues>({
+  const form = useForm({
     resolver: zodResolver(processReturnFormSchema),
     defaultValues: {
       returnDate: new Date(),

@@ -212,7 +212,7 @@ export default function SaleDetailPage() {
             productId: lineFromApi.productId,
             product: lineFromApi.product,
             inventoryItemId: lineFromApi.inventoryItemId,
-            imei: lineFromApi.inventoryItem?.imei || null,
+            imei: lineFromApi.imei ?? null,
             miscItemDescription: lineFromApi.description, // Asumiendo que description es miscItemDescription
             quantity: quantityNum,
             unitPrice: unitPriceNum,

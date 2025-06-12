@@ -638,8 +638,9 @@ export default function SalesByProductReportPage() {
             totalPages={reportData.totalPages}
             totalRecords={reportData.total}
             limit={reportData.limit}
-            onPageChange={(newPage) => setCurrentPage(newPage)}
-            isFetching={isFetchingReport} // Pasa isFetching para los controles de paginación
+            onNextPage={() => setCurrentPage(reportData.page + 1)}
+            onPreviousPage={() => setCurrentPage(reportData.page - 1)}
+            isFetching={isFetchingReport}
           />
         </div>
       )}

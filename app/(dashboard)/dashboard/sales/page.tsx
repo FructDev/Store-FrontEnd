@@ -45,6 +45,7 @@ import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Eye, Filter, XCircle, ShoppingCart } from "lucide-react"; // Iconos
+import { Label } from "@/components/ui/label";
 // import { FormLabel } from "@/components/ui/form";
 
 // Mapeo para estados de Venta
@@ -281,9 +282,14 @@ export default function SalesListPage() {
             <div>
               {" "}
               {/* Ya no necesitas <div className="space-y-1.5"> si DatePickerWithRange lo maneja */}
+              <Label
+                htmlFor="sales-date-filter"
+                className="text-xs font-medium"
+              >
+                Fecha de Venta
+              </Label>
               <DatePickerWithRange
-                id="sales-date-filter" // ID para el htmlFor
-                label="Fecha de Venta" // Pasar la etiqueta como prop
+                id="sales-date-filter"
                 date={dateRange}
                 onDateChange={setDateRange}
                 className="w-full"

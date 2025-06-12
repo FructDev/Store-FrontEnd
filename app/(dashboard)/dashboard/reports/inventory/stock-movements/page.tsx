@@ -533,7 +533,8 @@ export default function StockMovementsReportPage() {
       </Card>
 
       {isKardexMode &&
-        reportData?.openingBalance !== null &&
+        reportData &&
+        reportData.openingBalance !== null &&
         !isLoadingReport && (
           <Card className="mb-4 shrink-0 bg-amber-50 border-amber-200">
             <CardContent className="p-3 text-sm">
@@ -729,7 +730,8 @@ export default function StockMovementsReportPage() {
             totalPages={reportData.totalPages}
             totalRecords={reportData.total}
             limit={reportData.limit}
-            onPageChange={(newPage) => setCurrentPage(newPage)}
+            onNextPage={() => setCurrentPage(reportData.page + 1)}
+            onPreviousPage={() => setCurrentPage(reportData.page - 1)}
             isFetching={isFetchingReport}
           />
         </div>
