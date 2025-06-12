@@ -59,6 +59,7 @@ export interface PaginatedSuppliersResponse {
 export interface InventoryItem {
   id: string;
   productId: string;
+  product?: Partial<Product>; // Relación anidada, solo si es necesario
   storeId: string;
   locationId: string | null;
   location?: InventoryLocationBasic | null; // Relación anidada

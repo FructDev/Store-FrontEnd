@@ -6,10 +6,11 @@ import { useQuery } from "@tanstack/react-query";
 import apiClient from "@/lib/api";
 import {
   InventoryItem,
-  PaginatedData, // Usaremos PaginatedData<InventoryItem>
+  // / Usaremos PaginatedData<InventoryItem>
   ProductBasic,
   InventoryLocationBasic,
 } from "@/types/inventory.types";
+import { PaginatedData } from "@/types/shared.types"; // Asegúrate de que este tipo esté definido correctamente
 import {
   InventoryItemStatus as PrismaInventoryItemStatus,
   // ProductType as PrismaProductType,
