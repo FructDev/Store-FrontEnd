@@ -282,7 +282,7 @@ export default function POSPage() {
     useState<ProductBasic | null>(null);
   const [isSerialSelectOpen, setIsSerialSelectOpen] = useState(false);
 
-  const form = useForm<POSFormValuesZod>({
+  const form = useForm({
     // Usar el tipo inferido localmente
     resolver: zodResolver(posFormSchema),
     defaultValues: {
@@ -465,7 +465,7 @@ export default function POSPage() {
         // 'discountOnTotalType' y 'discountOnTotalValue' son para CALCULAR ese monto.
         if (
           localValues.discountOnTotalType &&
-          localValues.discountOnTotalValue !== undefined &&
+          localValues.discountOnTotalValue != null && // ✅ descarta null y undefined
           localValues.discountOnTotalValue > 0
         ) {
           const discountValue = Number(localValues.discountOnTotalValue) || 0;
@@ -493,9 +493,10 @@ export default function POSPage() {
             );
           }
         } else if (
-          localValues.discountOnTotalType === "" ||
-          localValues.discountOnTotalValue === 0 ||
-          localValues.discountOnTotalValue === null
+          !localValues.discountOnTotalType ||
+          localValues.discountOnTotalValue === null ||
+          localValues.discountOnTotalValue === undefined ||
+          localValues.discountOnTotalValue <= 0
         ) {
           // Si se quita el tipo de descuento o el valor es 0, el monto del descuento es 0
           actualGeneralDiscountAmount = 0;
@@ -1526,7 +1527,7 @@ export default function POSPage() {
 
                         appendPayment({
                           fieldId: crypto.randomUUID(),
-                          method: undefined, // O un default como CASH
+                          method: PaymentMethod.CASH, // O un default como CASH
                           amount: parseFloat(amountStillDue.toFixed(2)), // <-- AUTOCOMPLETA CON LO QUE FALTA
                           reference: "",
                           cardLast4: "",
@@ -1708,7 +1709,7 @@ export default function POSPage() {
                         {formatCurrency(
                           Math.max(
                             0,
-                            form.getValues("totalAmount") -
+                            (form.getValues("totalAmount") ?? 0) - // 👈 0 si es undefined
                               paymentFields.reduce(
                                 (acc, p) => acc + (Number(p.amount) || 0),
                                 0
@@ -1789,7 +1790,7 @@ export default function POSPage() {
                         checked={cartLines.some(
                           (line) => line.inventoryItemId === item.id
                         )}
-                        readOnly
+                        aria-readonly="true"
                         className="mr-2"
                       />
                       <span>{item.imei}</span>
@@ -1821,7 +1822,7 @@ export default function POSPage() {
           isOpen={isNonSerializedDialogOpen}
           onOpenChange={setIsNonSerializedDialogOpen}
           onAddToCart={(product, location) => {
-            addProductToCart(product, null, {
+            addProductToCart(product, undefined, {
               locationId: location.locationId,
               locationName: location.locationName,
             });
