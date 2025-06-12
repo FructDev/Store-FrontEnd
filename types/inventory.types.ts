@@ -224,6 +224,7 @@ export interface PurchaseOrderDetailed
 // Este tipo representa lo que viene del backend para CADA LÍNEA
 export interface PurchaseOrderLineFromAPI {
   id: string;
+  lineNumber: number; // Número de línea, si el backend lo envía
   productId: string;
   product?: ProductBasic; // Asume que el backend incluye esto
   orderedQuantity: number; // Nombre como en tu respuesta de Postman

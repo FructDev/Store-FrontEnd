@@ -55,6 +55,7 @@ interface SupplierDetailsForPO extends SupplierBasic {
 
 // Ajustar PurchaseOrderDetailed si el backend devuelve supplier con más campos
 interface EnrichedPurchaseOrderLine extends PurchaseOrderLine {
+  lineNumber: number;
   parsedUnitCost: number;
   calculatedLineTotal: number;
   pendingQuantity: number;
@@ -116,25 +117,37 @@ export default function PurchaseOrderDetailPage() {
       };
 
       const parsedLines: EnrichedPurchaseOrderLine[] = poDataFromApi.lines.map(
-        (lineFromApi: PurchaseOrderLineFromAPI) => {
-          const unitCost = safeParseFloat(lineFromApi.unitCost, 0)!; // Asumimos que no será null o que 0 es ok
+        (lineFromApi: PurchaseOrderLineFromAPI): EnrichedPurchaseOrderLine => {
+          // Tus cálculos de parseo están perfectos
+          const unitCost = safeParseFloat(lineFromApi.unitCost, 0)!;
           const orderedQuantity = safeParseInt(lineFromApi.orderedQuantity, 0)!;
           const receivedQuantity = safeParseInt(
             lineFromApi.receivedQuantity,
             0
           )!;
-
-          const calculatedLineTotal = unitCost * orderedQuantity;
           const pendingQuantity = orderedQuantity - receivedQuantity;
+          const calculatedLineTotal = unitCost * orderedQuantity;
 
+          // --- CONSTRUCCIÓN DEL OBJETO CORREGIDA ---
+          // Construimos el objeto para que coincida EXACTAMENTE con la interfaz EnrichedPurchaseOrderLine
           return {
-            ...lineFromApi, // Propiedades originales: id, productId, product
-            orderedQuantity, // Sobrescribe con el número parseado
-            receivedQuantity, // Sobrescribe con el número parseado
-            unitCost, // Sobrescribe con el número parseado
-            calculatedLineTotal,
-            pendingQuantity,
+            // 1. Copiamos todas las propiedades originales de la línea que viene de la API.
+            //    Esto satisface la parte 'extends PurchaseOrderLine' de tu tipo.
+            ...lineFromApi,
+
+            // 2. Sobrescribimos las propiedades que parseamos a número, si es necesario.
+            //    (Aunque `...lineFromApi` ya las incluye como string, TypeScript permite
+            //    sobrescribirlas con un tipo más específico si la interfaz lo define).
+            orderedQuantity: orderedQuantity,
+            receivedQuantity: receivedQuantity,
+
+            // 3. Añadimos las nuevas propiedades calculadas con los NOMBRES CORRECTOS
+            //    que tu interfaz EnrichedPurchaseOrderLine espera.
+            parsedUnitCost: unitCost, // <-- Usamos el nombre 'parsedUnitCost'
+            calculatedLineTotal: calculatedLineTotal, // <-- Usamos el nombre 'calculatedLineTotal'
+            pendingQuantity: pendingQuantity,
           };
+          // --- FIN DE LA CONSTRUCCIÓN ---
         }
       );
 

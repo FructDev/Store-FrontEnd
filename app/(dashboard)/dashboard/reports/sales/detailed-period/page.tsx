@@ -54,7 +54,7 @@ import { CustomerBasic } from "@/types/customer.types";
 import { UserMinimal } from "@/types/user.types";
 import { ProductBasic } from "@/types/inventory.types";
 import { SaleStatus as PrismaSaleStatus } from "@/types/prisma-enums";
-import { saleStatusLabels } from "@/app/(dashboard)/dashboard/sales/page"; // Reutilizar etiquetas de estado de venta
+import { saleStatusLabels } from "@/types/sales.types"; // Reutilizar etiquetas de estado de venta
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";

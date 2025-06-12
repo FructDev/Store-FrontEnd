@@ -322,3 +322,11 @@ export interface SaleReturnDetails {
   lines: SaleReturnLineDetails[];
   // createdAt, updatedAt
 }
+
+export const saleStatusLabels: Record<PrismaSaleStatus, string> = {
+  PENDING_PAYMENT: "Pendiente Pago",
+  COMPLETED: "Completada",
+  CANCELLED: "Cancelada",
+  RETURNED: "Devuelta",
+  PARTIALLY_RETURNED: "Dev. Parcial",
+};
